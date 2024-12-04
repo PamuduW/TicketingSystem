@@ -7,10 +7,12 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
+import org.springframework.web.util.UriTemplate;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class TextWebSocket extends TextWebSocketHandler {
@@ -21,6 +23,11 @@ public class TextWebSocket extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(@NonNull WebSocketSession session) {
         try {
+            Map<String, String> pathVariables = new UriTemplate("/ws/{eventId}/{vendorId}")
+                    .match(session.getUri().getPath());
+            String eventId = pathVariables.get("eventId");
+            String vendorId = pathVariables.get("vendorId");
+            logger.info("Connection established for event: {} and vendor: {}", eventId, vendorId);
             sessions.add(session);
         } catch (Exception e) {
             logger.error("Error adding session", e);
