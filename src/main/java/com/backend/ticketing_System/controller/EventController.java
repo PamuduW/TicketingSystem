@@ -117,9 +117,9 @@ public class EventController {
     }
 
     @PostMapping("/event/{id}/stopSim")
-    public ResponseEntity<?> stopSimulation(@PathVariable String id, @RequestParam boolean mode) {
+    public ResponseEntity<?> stopSimulation(@PathVariable String id) {
         try {
-            eventService.stopSimulation(id, mode);
+            eventService.stopSimulation(id);
             return ResponseEntity.ok().build();
         } catch (IOException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
