@@ -36,6 +36,15 @@ const SimInputForm: React.FC<SimInputFormProps> = ({ eventId }) => {
         }
     };
 
+    const handleStopSim = async () => {
+        try {
+            const response = await API.post(`/event/${eventId}/stopSim`);
+            console.log("Response:", response.data);
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    };
+
     return (
         <form onSubmit={handleSubmit}>
             {inputs.map((input, index) => (
@@ -54,7 +63,8 @@ const SimInputForm: React.FC<SimInputFormProps> = ({ eventId }) => {
                     </label>
                 </div>
             ))}
-            <button type="submit">Submit</button>
+            <button type="submit">Start Sim</button>
+            <button type="button" onClick={handleStopSim}>Stop Sim</button>
         </form>
     );
 };
