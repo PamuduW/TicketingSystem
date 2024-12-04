@@ -1,15 +1,17 @@
 import React, { useEffect, useState, useContext } from "react";
+import { useParams } from "react-router-dom";
 import { UserContext } from "../Common/UserContext";
 
-const SimLog: React.FC<{ eventId: string }> = ({ eventId }) => {
+const SimLog: React.FC = () => {
+    const { eventId } = useParams<{ eventId: string }>();
     const userContext = useContext(UserContext);
     const [messages, setMessages] = useState<string[]>([]);
 
     useEffect(() => {
         if (userContext?.userData) {
             const vendorId = userContext.userData.userId;
-            // const socket = new WebSocket(`ws://localhost:8080/ws/${eventId}/${vendorId}`);
-            const socket = new WebSocket(`wss://ticketing---system-32a1f2f59169.herokuapp.com/ws/${eventId}/${vendorId}`);
+            const socket = new WebSocket(`ws://localhost:8080/ws`);
+            // const socket = new WebSocket(`wss://ticketing---system-32a1f2f59169.herokuapp.com/ws/${eventId}/${vendorId}`);
 
             socket.onopen = () => {
                 console.log("WebSocket connection established");

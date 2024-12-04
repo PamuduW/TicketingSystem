@@ -19,10 +19,9 @@ const Simulation: React.FC = () => {
         <>
             <button onClick={handleBackToEvent}>Back to Event</button>
             <SimInputForm eventId={eventId} />
-            <SimLog eventId={eventId} />
+            <SimLog />
         </>
     );
 };
 
 export default Simulation;
-
