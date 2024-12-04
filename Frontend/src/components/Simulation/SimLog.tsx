@@ -10,7 +10,7 @@ const SimLog: React.FC = () => {
     useEffect(() => {
         if (userContext?.userData) {
             const vendorId = userContext.userData.userId;
-            const socket = new WebSocket(`ws://localhost:8080/ws/${eventId}/${vendorId}`);
+            const socket = new WebSocket(`ws://localhost:8080/ws`);
             // const socket = new WebSocket(`wss://ticketing---system-32a1f2f59169.herokuapp.com/ws/${eventId}/${vendorId}`);
 
             socket.onopen = () => {
