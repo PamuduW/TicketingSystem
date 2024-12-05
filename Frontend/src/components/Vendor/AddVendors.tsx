@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { UserContext } from "../Common/UserContext";
 import API from "../../axios";
+import Button from "@mui/material/Button";
 
 interface Event {
     eventId: string;
@@ -116,6 +117,7 @@ const AddVendors: React.FC = () => {
                 }
             );
             console.log("Response:", response.data);
+            alert("Vendors updated successfully");
             navigate(`/event/${eventId}`);
         } catch (error) {
             console.error("Error changing vendors:", error);
@@ -128,22 +130,20 @@ const AddVendors: React.FC = () => {
 
     return (
         <div>
-            <h1>{event.name}</h1>
-            <h3>Current Vendors</h3>
-            <ul>
-                {event.vendors.map((vendorId) => (
-                    <li key={vendorId}>
-                        {vendorDetails[vendorId]?.username || "Loading..."}
-                    </li>
-                ))}
-            </ul>
-            <h3>All Vendors</h3>
+            <h2 style={{margin : 50}}>Change Vendors</h2>
+            <h3 className={"user-details"}>Current Vendors</h3>
+            {event.vendors.map((vendorId) => (
+                <p key={vendorId} className={"user-details"}>
+                    {vendorDetails[vendorId]?.username || "Loading..."}
+                </p>
+            ))}
+            <h3 className={"user-details"} style={{marginTop : 30}}>All Vendors</h3>
             <form>
                 {allVendors.map(
                     (vendor) =>
                         vendor.vendorId !== event.ownerId && (
-                            <div key={vendor.vendorId}>
-                                <label>
+                            <div key={vendor.vendorId} className={"user-details"}>
+                                <label >
                                     <input
                                         type="checkbox"
                                         id={vendor.vendorId}
@@ -162,9 +162,11 @@ const AddVendors: React.FC = () => {
                             </div>
                         )
                 )}
-                <button type="button" onClick={handleChangeVendors}>
-                    Change Vendors
-                </button>
+                <div className={"buttons"}>
+                    <Button type="button" variant="outlined" onClick={handleChangeVendors}>
+                        Change Vendors
+                    </Button>
+                </div>
             </form>
         </div>
     );

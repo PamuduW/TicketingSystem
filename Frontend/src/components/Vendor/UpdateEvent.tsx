@@ -2,6 +2,9 @@ import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { UserContext } from "../Common/UserContext";
 import API from "../../axios";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+
 
 interface Event {
     eventId: string;
@@ -76,12 +79,13 @@ const UpdateEvent: React.FC = () => {
     }
 
     return (
-        <div>
-            <h1>Update Event</h1>
+        <div style={{textAlign : "center"}}>
+            <h2 style={{margin : 50}}>Update Event</h2>
             <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="name">Name:</label>
-                    <input
+                <div style={{ paddingBottom: 20 }}>
+                    <TextField
+                        required={true}
+                        label={"Name"}
                         type="text"
                         id="name"
                         name="name"
@@ -89,9 +93,10 @@ const UpdateEvent: React.FC = () => {
                         onChange={handleChange}
                     />
                 </div>
-                <div>
-                    <label htmlFor="desc">Description:</label>
-                    <input
+                <div style={{ paddingBottom: 20 }}>
+                    <TextField
+                        required={true}
+                        label={"Description"}
                         type="text"
                         id="desc"
                         name="desc"
@@ -99,9 +104,10 @@ const UpdateEvent: React.FC = () => {
                         onChange={handleChange}
                     />
                 </div>
-                <div>
-                    <label htmlFor="totalTickets">Total Tickets:</label>
-                    <input
+                <div style={{ paddingBottom: 20 }}>
+                    <TextField
+                        required={true}
+                        label={"Total Tickets"}
                         type="number"
                         id="totalTickets"
                         name="totalTickets"
@@ -109,9 +115,10 @@ const UpdateEvent: React.FC = () => {
                         onChange={handleChange}
                     />
                 </div>
-                <div>
-                    <label htmlFor="maxCapacity">Max Capacity:</label>
-                    <input
+                <div style={{ paddingBottom: 20 }}>
+                    <TextField
+                        required={true}
+                        label={"Max Capacity"}
                         type="number"
                         id="maxCapacity"
                         name="maxCapacity"
@@ -119,7 +126,7 @@ const UpdateEvent: React.FC = () => {
                         onChange={handleChange}
                     />
                 </div>
-                <button type="submit">Update Event</button>
+                <Button variant="outlined" type="submit">Update Event</Button>
             </form>
         </div>
     );

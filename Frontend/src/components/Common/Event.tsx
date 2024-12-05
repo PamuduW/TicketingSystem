@@ -3,6 +3,10 @@ import { useParams, useNavigate } from "react-router-dom";
 import { UserContext } from "./UserContext";
 import API from "../../axios";
 import Button from "@mui/material/Button";
+import Drawer from "@mui/material/Drawer";
+import ChangeTickets from "./ChangeTickets";
+import AddVendors from "../Vendor/AddVendors";
+import UpdateEvent from "../Vendor/UpdateEvent";
 
 interface Event {
     eventId: string;
@@ -27,9 +31,10 @@ const Event: React.FC = () => {
     const userContext = useContext(UserContext);
     const navigate = useNavigate();
     const [event, setEvent] = useState<Event | null>(null);
-    const [vendorDetails, setVendorDetails] = useState<{
-        [key: string]: Vendor;
-    }>({});
+    const [vendorDetails, setVendorDetails] = useState<{ [key: string]: Vendor }>({});
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const [vendorDrawerOpen, setVendorDrawerOpen] = useState(false);
+    const [updateDrawerOpen, setUpdateDrawerOpen] = useState(false);
 
     const fetchVendorDetails = async (vendorId: string) => {
         try {
@@ -47,23 +52,23 @@ const Event: React.FC = () => {
         }
     };
 
-    useEffect(() => {
-        const fetchEvent = async () => {
-            if (userContext?.userData) {
-                const url = `/event/${eventId}`;
-                try {
-                    const response = await API.get(url, {
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                    });
-                    setEvent(response.data);
-                } catch (error) {
-                    console.error("Error fetching event:", error);
-                }
+    const fetchEvent = async () => {
+        if (userContext?.userData) {
+            const url = `/event/${eventId}`;
+            try {
+                const response = await API.get(url, {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+                setEvent(response.data);
+            } catch (error) {
+                console.error("Error fetching event:", error);
             }
-        };
+        }
+    };
 
+    useEffect(() => {
         fetchEvent();
     }, [eventId, userContext]);
 
@@ -77,6 +82,12 @@ const Event: React.FC = () => {
         }
     }, [event, vendorDetails]);
 
+    useEffect(() => {
+        if (!drawerOpen || !vendorDrawerOpen || !updateDrawerOpen) {
+            fetchEvent();
+        }
+    }, [drawerOpen, vendorDrawerOpen, updateDrawerOpen]);
+
     if (!event) {
         return <p>Loading...</p>;
     }
@@ -85,24 +96,20 @@ const Event: React.FC = () => {
         navigate(`/simulation/${eventId}`);
     };
 
-    const handleBuyTickets = () => {
-        navigate(`/changeTickets/${eventId}`);
-    };
-
-    const handleAddTickets = () => {
-        navigate(`/changeTickets/${eventId}`);
+    const handleChangeTickets = () => {
+        setDrawerOpen(true);
     };
 
     const handleAddVendors = () => {
-        navigate(`/addVendors/${eventId}`);
+        setVendorDrawerOpen(true);
+    };
+
+    const handleUpdateEvent = () => {
+        setUpdateDrawerOpen(true);
     };
 
     const handleBackToDashboard = () => {
         navigate("/dashboard");
-    };
-
-    const handleUpdateEvent = () => {
-        navigate(`/updateEvent/${eventId}`);
     };
 
     return (
@@ -154,7 +161,7 @@ const Event: React.FC = () => {
                     {event.vendors.map((vendorId) => (
                         <p
                             className={"user-details"}
-                            style={{ marginTop: 1, marginBottom: 10 }}
+                            style={{ margin: 1 }}
                             key={vendorId}
                         >
                             {vendorDetails[vendorId]?.username || "Loading..."}
@@ -162,7 +169,7 @@ const Event: React.FC = () => {
                     ))}
                 </>
             )}
-            <div>
+            <div style={{marginTop : 15}}>
                 {userContext?.userData?.isVendor && (
                     <>
                         ---------------------------------------------------------------------------
@@ -170,7 +177,7 @@ const Event: React.FC = () => {
                         <div className={"buttons"}>
                             <Button
                                 variant="outlined"
-                                onClick={handleAddTickets}
+                                onClick={handleChangeTickets}
                             >
                                 Add Tickets
                             </Button>
@@ -210,7 +217,7 @@ const Event: React.FC = () => {
                         <div className={"buttons"}>
                             <Button
                                 variant="outlined"
-                                onClick={handleBuyTickets}
+                                onClick={handleChangeTickets}
                             >
                                 Buy Tickets
                             </Button>
@@ -218,6 +225,36 @@ const Event: React.FC = () => {
                     </div>
                 )}
             </div>
+            <Drawer
+                anchor="right"
+                open={drawerOpen}
+                onClose={() => setDrawerOpen(false)}
+                sx={{ "& .MuiDrawer-paper": { backgroundColor: "#d4d4d4" } }}
+            >
+                <div style={{ width: 300, padding: 20 }}>
+                    <ChangeTickets />
+                </div>
+            </Drawer>
+            <Drawer
+                anchor="right"
+                open={vendorDrawerOpen}
+                onClose={() => setVendorDrawerOpen(false)}
+                sx={{ "& .MuiDrawer-paper": { backgroundColor: "#d4d4d4" } }}
+            >
+                <div style={{ width: 300, padding: 20 }}>
+                    <AddVendors />
+                </div>
+            </Drawer>
+            <Drawer
+                anchor="right"
+                open={updateDrawerOpen}
+                onClose={() => setUpdateDrawerOpen(false)}
+                sx={{ "& .MuiDrawer-paper": { backgroundColor: "#d4d4d4" } }}
+            >
+                <div style={{ width: 300, padding: 20 }}>
+                    <UpdateEvent />
+                </div>
+            </Drawer>
         </div>
     );
 };

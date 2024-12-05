@@ -33,6 +33,7 @@ const ChangeTickets: React.FC = () => {
                     },
                 });
                 console.log("Response:", response.data);
+                alert("Tickets updated successfully");
                 navigate(`/event/${eventId}`);
             } catch (error : unknown) {
                 console.error("Error:", error);
@@ -49,9 +50,11 @@ const ChangeTickets: React.FC = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} style={{textAlign : "center"}}>
+            {userContext?.userData?.isVendor ? <h2 style={{margin : 50}}>Add Tickets</h2> : <h2 style={{margin : 50}}>Buy Tickets</h2>}
             <div style={{ paddingBottom: 15 }}>
                 <TextField
+                    required={true}
                     label={"Number of Tickets"}
                     type="number"
                     value={ticketCount}

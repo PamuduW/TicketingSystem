@@ -76,7 +76,7 @@ const Login: React.FC = () => {
                 </div>
                 <div className={isVendor ? "large" : "small"}>Vendor</div>
             </div>
-            <div style={{ paddingBottom: 10 }}>
+            <div style={{ marginBottom: 20 }}>
                 <TextField
                     required={true}
                     id="username"
@@ -86,7 +86,7 @@ const Login: React.FC = () => {
                     onChange={(e) => setUsername(e.target.value)}
                 />
             </div>
-            <div style={{ paddingBottom: 30 }}>
+            <div style={{ marginBottom: 30 }}>
                 <TextField
                     required={true}
                     id="password"
@@ -98,16 +98,16 @@ const Login: React.FC = () => {
                 />
             </div>
             {errorMessage && (
-                <div style={{ paddingBottom: 10, color: "red" }}>
+                <div style={{ marginBottom: 10, color: "red" }}>
                     {errorMessage}
                 </div>
             )}
-            <div style={{ paddingBottom: 10 }}>
+            <div style={{ marginBottom: 20 }}>
                 <Button type="submit" variant="outlined" color="primary">
                     Submit
                 </Button>
             </div>
-            <div style={{ paddingBottom: 10 }}>
+            <div style={{ marginBottom: 20 }}>
                 <Button
                     onClick={handleCreateProfile}
                     variant="text"
