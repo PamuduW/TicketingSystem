@@ -1,5 +1,6 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import API from "../../axios";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
@@ -10,6 +11,7 @@ const Login: React.FC = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [isVendor, setIsVendor] = useState(true);
+    const [errorMessage, setErrorMessage] = useState("");
     const navigate = useNavigate();
     const userContext = useContext(UserContext);
 
@@ -34,13 +36,22 @@ const Login: React.FC = () => {
                     username: response.data.username,
                     userId: isVendor
                         ? response.data.vendorId
-                        : response.data.customerId, // Save vendorId or customerId based on switch state
-                    isVendor: isVendor, // Save isVendor as true if the switch is on
+                        : response.data.customerId,
+                    isVendor: isVendor,
                 });
             }
-            navigate("/dashboard"); // Redirect to dashboard page on success
-        } catch (error) {
+            navigate("/dashboard");
+        } catch (error: unknown) {
             console.error("Error:", error);
+            if (axios.isAxiosError(error) && error.response) {
+                if (error.response.status === 400) {
+                    setErrorMessage("The password is not correct");
+                } else if (error.response.status === 404) {
+                    setErrorMessage("Account not found");
+                }
+            } else {
+                setErrorMessage("An error occurred. Please try again.");
+            }
         }
     };
 
@@ -75,6 +86,7 @@ const Login: React.FC = () => {
                     onChange={(e) => setPassword(e.target.value)}
                 />
             </div>
+            {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
             <Button type="submit" variant="contained" color="primary">
                 Submit
             </Button>

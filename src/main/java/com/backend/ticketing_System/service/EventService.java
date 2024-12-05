@@ -53,7 +53,7 @@ public class EventService {
         List<Event> list = new ArrayList<>();
         for (Event event : eventRepo.findAll()) {
             for (String optionalVendorId : event.getVendors()) {
-                if (optionalVendorId.equals(vendorId)){
+                if (optionalVendorId.equals(vendorId)) {
                     list.add(event);
                     break;
                 }
@@ -186,17 +186,19 @@ public class EventService {
             if (eventRepo.findById(eventID).isPresent()) {
                 int totalTickets = eventRepo.findById(eventID).get().getTotalTickets();
                 int maxTicketCapacity = eventRepo.findById(eventID).get().getMaxCapacity();
-                Sim.startSimulation(totalTickets, vendorReleaseRate, customerRetrievalRate, maxTicketCapacity, noOfVendors, noOfCustomers, simSpeed);
+                if (!Sim.startSimulation(totalTickets, vendorReleaseRate, customerRetrievalRate, maxTicketCapacity, noOfVendors, noOfCustomers, simSpeed))
+                    throw new IOException("Simulation is already running.");
             } else throw new IOException("Event not found with id " + eventID);
         } finally {
             lock.unlock();
         }
     }
 
-    public void stopSimulation(String id) throws IOException{
+    public void stopSimulation(String id) throws IOException {
         lock.lock();
         try {
-            Sim.stopSimulation(true);
+            if (!Sim.stopSimulation(true))
+                throw new IOException("Simulation is not running.");
         } finally {
             lock.unlock();
         }
@@ -213,7 +215,7 @@ public class EventService {
 /// //////////////////////////////////////// save a logs in the backend ////////////////////////////////////////
 
 /// /////////////////////////////////////////// give real time variables to the front end to display //////////////////////////////////
-/////////////////////////////////////////////////////////////// add editing event details make owner id remains unchanged //////////////////////////////////////////////////////////////
+/// //////////////////////////////////////////////////////////// add editing event details make owner id remains unchanged //////////////////////////////////////////////////////////////
 /// //////
-///////////////////////////////////// add stop sim button //////////////////////////////////////////////////
+/// ////////////////////////////////// add stop sim button //////////////////////////////////////////////////
 /// /////////////////////////////////////////// add time to that update stings in console//////////////////////////////////////

@@ -15,46 +15,53 @@ public class Sim {
     private static boolean isRunning = false;
 
 
-    public static void startSimulation(int totalTickets, int vendorReleaseRate, int customerRetrievalRate, int maxTicketCapacity, int noOfVendors, int noOfCustomers, int simSpeed) {
-        if (isRunning) {
-            System.out.println("Simulation is already running.");
-            return;
+    public static boolean startSimulation(int totalTickets, int vendorReleaseRate, int customerRetrievalRate, int maxTicketCapacity, int noOfVendors, int noOfCustomers, int simSpeed) {
+        lock.lock();
+        try {
+            if (isRunning) {
+                System.out.println("Simulation is already running.");
+                return false;
+            }
+
+            activeVendors = true;
+            isRunning = true;
+
+            VendorSim.setSimulationSpeed(simSpeed);
+            VendorSim.setTotalTicketLimit(totalTickets);
+            EventSim eventSim = new EventSim(maxTicketCapacity);
+            VendorSim.setMessagePrinted(false);
+            VendorSim.setTotalTicketsAdded(0);
+            VendorSim.setVendorCount(0);
+            CustomerSim.setSimulationSpeed(simSpeed);
+            CustomerSim.setCustomerCount(0);
+            CustomerSim.setFinalTransaction(false);
+            CustomerSim.setMessagePrinted(false);
+
+            for (int i = 0; i < noOfVendors; i++) {
+                Thread vendorThread = new Thread(new VendorSim(vendorReleaseRate, eventSim));
+                vendorThreads.add(vendorThread);
+                vendorThread.start();
+            }
+
+            for (int i = 0; i < noOfCustomers; i++) {
+                Thread customerThread = new Thread(new CustomerSim(customerRetrievalRate, eventSim));
+                customerThreads.add(customerThread);
+                customerThread.start();
+            }
+            System.out.println("Simulation started.");
+            TextWebSocket.broadcast("--- Simulation started.");
+        } finally {
+            lock.unlock();
         }
-
-        activeVendors = true;
-        isRunning = true;
-
-        VendorSim.setSimulationSpeed(simSpeed);
-        VendorSim.setTotalTicketLimit(totalTickets);
-        EventSim eventSim = new EventSim(maxTicketCapacity);
-        VendorSim.setMessagePrinted(false);
-        VendorSim.setTotalTicketsAdded(0);
-        VendorSim.setVendorCount(0);
-        CustomerSim.setSimulationSpeed(simSpeed);
-        CustomerSim.setCustomerCount(0);
-        CustomerSim.setFinalTransaction(false);
-        CustomerSim.setMessagePrinted(false);
-
-        for (int i = 0; i < noOfVendors; i++) {
-            Thread vendorThread = new Thread(new VendorSim(vendorReleaseRate, eventSim));
-            vendorThreads.add(vendorThread);
-            vendorThread.start();
-        }
-
-        for (int i = 0; i < noOfCustomers; i++) {
-            Thread customerThread = new Thread(new CustomerSim(customerRetrievalRate, eventSim));
-            customerThreads.add(customerThread);
-            customerThread.start();
-        }
-        System.out.println("Simulation started.");
+        return true;
     }
 
-    public static void stopSimulation(boolean message) {
+    public static boolean stopSimulation(boolean message) {
         lock.lock();
         try {
             if (!isRunning) {
                 System.out.println("Simulation is not running.");
-                return;
+                return false;
             }
 
             vendorThreads.forEach(Thread::interrupt);
@@ -65,10 +72,11 @@ public class Sim {
             isRunning = false;
             if (message) {
                 System.out.println("Simulation stopped by the user.");
-                TextWebSocket.broadcast("Simulation stopped by the user.");
+                TextWebSocket.broadcast("--- Simulation stopped by the user.");
             }
         } finally {
             lock.unlock();
         }
+        return true;
     }
 }

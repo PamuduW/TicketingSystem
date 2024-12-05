@@ -5,10 +5,11 @@ import Login from "../Common/Login";
 import Dashboard from "../Common/Dashboard";
 import { UserProvider } from "./UserContext";
 import Event from "./Event";
-import Simulation from "../Simulation/Simulation.tsx";
-import ChangeTickets from "./ChangeTickets.tsx";
-import AddVendors from "../Vendor/AddVendors.tsx";
-import CreateEvent from "../Vendor/CreateEvent.tsx";
+import Simulation from "../Simulation/Simulation";
+import ChangeTickets from "./ChangeTickets";
+import AddVendors from "../Vendor/AddVendors";
+import CreateEvent from "../Vendor/CreateEvent";
+import UpdateEvent from "../Vendor/UpdateEvent";
 
 function StartPage() {
     return (
@@ -19,19 +20,11 @@ function StartPage() {
                     <Route path="/register" element={<Register />} />
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/event/:eventId" element={<Event />} />
-                    <Route
-                        path="/simulation/:eventId"
-                        element={<Simulation />}
-                    />
-                    <Route
-                        path="/changeTickets/:eventId"
-                        element={<ChangeTickets />}
-                    />
-                    <Route
-                        path="/addVendors/:eventId"
-                        element={<AddVendors />}
-                    />
+                    <Route path="/simulation/:eventId" element={<Simulation />} />
+                    <Route path="/changeTickets/:eventId" element={<ChangeTickets />} />
+                    <Route path="/addVendors/:eventId" element={<AddVendors />} />
                     <Route path="/createEvent" element={<CreateEvent />} />
+                    <Route path="/updateEvent/:eventId" element={<UpdateEvent />} />
                 </Routes>
             </Router>
         </UserProvider>

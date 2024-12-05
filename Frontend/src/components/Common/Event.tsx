@@ -96,6 +96,14 @@ const Event: React.FC = () => {
         navigate(`/addVendors/${eventId}`);
     };
 
+    const handleBackToDashboard = () => {
+        navigate("/dashboard");
+    };
+
+    const handleUpdateEvent = () => {
+        navigate(`/updateEvent/${eventId}`);
+    };
+
     return (
         <div>
             <h1>{event.name}</h1>
@@ -143,6 +151,8 @@ const Event: React.FC = () => {
                 {!userContext?.userData?.isVendor && (
                     <button onClick={handleBuyTickets}>Buy Tickets</button>
                 )}
+                <button onClick={handleBackToDashboard}>Back to Dashboard</button>
+                <button onClick={handleUpdateEvent}>Update Event</button>
             </div>
         </div>
     );

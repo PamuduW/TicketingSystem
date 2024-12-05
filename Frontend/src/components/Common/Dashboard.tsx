@@ -52,6 +52,11 @@ const Dashboard: React.FC = () => {
         navigate("/createEvent");
     };
 
+    const handleLogout = () => {
+        navigate("/");
+        window.location.reload();
+    };
+
     return (
         <div>
             <h1>Dashboard</h1>
@@ -66,6 +71,7 @@ const Dashboard: React.FC = () => {
                     <button onClick={handleCreateEventClick}>
                         Create an Event
                     </button>
+                    <button onClick={handleLogout}>Logout</button>
                     <h3>Events</h3>
                     {events.length > 0 ? (
                         <ul>

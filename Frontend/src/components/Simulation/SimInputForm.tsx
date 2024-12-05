@@ -32,7 +32,11 @@ const SimInputForm: React.FC<SimInputFormProps> = ({ eventId }) => {
             );
             console.log("Response:", response.data);
         } catch (error) {
-            console.error("Error:", error);
+            if (error.response && error.response.status === 409) {
+                alert("The simulation is already running");
+            } else {
+                console.error("Error:", error);
+            }
         }
     };
 
@@ -41,7 +45,11 @@ const SimInputForm: React.FC<SimInputFormProps> = ({ eventId }) => {
             const response = await API.post(`/event/${eventId}/stopSim`);
             console.log("Response:", response.data);
         } catch (error) {
-            console.error("Error:", error);
+            if (error.response && error.response.status === 409) {
+                alert("The simulation is not running");
+            } else {
+                console.error("Error:", error);
+            }
         }
     };
 
