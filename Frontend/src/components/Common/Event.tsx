@@ -113,18 +113,15 @@ const Event: React.FC = () => {
                 </Button>
             </div>
             <h1>{event.name}</h1>
-
-            <p className={"user-details"}>
-                Event Description&#160;&#160;&#160;&#160;&#160;&#160;:{" "}
+            <h3 className={"user-details"}>Event Description</h3>
+            <p className={"user-details"} style={{ marginBottom: 30 }}>
                 {event.desc}
             </p>
             {userContext?.userData?.isVendor && (
-                <>
-                    <p className={"user-details"}>
-                        Owner&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;:{" "}
-                        {vendorDetails[event.ownerId]?.username || "Loading..."}
-                    </p>
-                </>
+                <p className={"user-details"}>
+                    Owner&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;:{" "}
+                    {vendorDetails[event.ownerId]?.username || "Loading..."}
+                </p>
             )}
             <p className={"user-details"}>
                 Total
@@ -154,28 +151,29 @@ const Event: React.FC = () => {
                     <h3 className={"user-details"} style={{ paddingTop: 16 }}>
                         Vendors
                     </h3>
-                    <ul style={{ marginTop: 1 }}>
-                        {event.vendors.map((vendorId) => (
-                            <li className={"user-details"} key={vendorId}>
-                                {vendorDetails[vendorId]?.username ||
-                                    "Loading..."}
-                            </li>
-                        ))}
-                    </ul>
+                    {event.vendors.map((vendorId) => (
+                        <p
+                            className={"user-details"}
+                            style={{ marginTop: 1, marginBottom: 10 }}
+                            key={vendorId}
+                        >
+                            {vendorDetails[vendorId]?.username || "Loading..."}
+                        </p>
+                    ))}
                 </>
             )}
             <div>
                 {userContext?.userData?.isVendor && (
                     <>
-                        <div>
+                        ---------------------------------------------------------------------------
+                        <h3 style={{ margin: 1 }}>Vendor Options</h3>
+                        <div className={"buttons"}>
                             <Button
                                 variant="outlined"
                                 onClick={handleAddTickets}
                             >
                                 Add Tickets
                             </Button>
-                        </div>
-                        <div>
                             <Button
                                 variant="outlined"
                                 onClick={handleSimulateEvent}
@@ -183,7 +181,9 @@ const Event: React.FC = () => {
                                 Simulate Event
                             </Button>
                         </div>
-                        <div>
+                        ---------------------------------------------------------------------------
+                        <h3 style={{ margin: 1 }}>Owner Options</h3>
+                        <div className={"buttons"}>
                             {userContext.userData.userId === event.ownerId && (
                                 <>
                                     <Button
@@ -204,9 +204,18 @@ const Event: React.FC = () => {
                     </>
                 )}
                 {!userContext?.userData?.isVendor && (
-                    <Button variant="outlined" onClick={handleBuyTickets}>
-                        Buy Tickets
-                    </Button>
+                    <div style={{ marginTop: 10 }}>
+                        ---------------------------------------------------------------------------
+                        <h3 style={{ margin: 1 }}>Customer Options</h3>
+                        <div className={"buttons"}>
+                            <Button
+                                variant="outlined"
+                                onClick={handleBuyTickets}
+                            >
+                                Buy Tickets
+                            </Button>
+                        </div>
+                    </div>
                 )}
             </div>
         </div>

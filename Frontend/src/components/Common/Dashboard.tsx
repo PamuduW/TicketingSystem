@@ -75,17 +75,19 @@ const Dashboard: React.FC = () => {
                         {userContext.userData.isVendor ? "Vendor" : "Customer"}
                     </p>
                     <div className={"user-details"}>
-                        <Button variant="outlined" onClick={handleLogout}>
+                        <Button variant="text" onClick={handleLogout}>
                             Logout
                         </Button>
                     </div>
                     <div className={"user-details"}>
-                        <Button
-                            variant="contained"
-                            onClick={handleCreateEventClick}
-                        >
-                            Create an Event
-                        </Button>
+                        {userContext?.userData?.isVendor && (
+                            <Button
+                                variant="outlined"
+                                onClick={handleCreateEventClick}
+                            >
+                                Create an Event
+                            </Button>
+                        )}
                     </div>
 
                     <h2>Events</h2>

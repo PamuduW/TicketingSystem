@@ -77,7 +77,10 @@ public class EventController {
         try {
             return ResponseEntity.ok().body(eventService.addTickets(id, ticketCount));
         } catch (IOException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+            if (e.getMessage().equals("Exceeded the total ticket limit"))
+                return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            else
+                return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
     }
 

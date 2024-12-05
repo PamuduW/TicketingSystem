@@ -5,12 +5,14 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Switch from "@mui/material/Switch";
 import "./Common.css";
+import axios from "axios";
 
 const Register: React.FC = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [isVendor, setIsVendor] = useState(true);
     const navigate = useNavigate();
+    const [errorMessage, setErrorMessage] = useState("");
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -27,8 +29,15 @@ const Register: React.FC = () => {
             setTimeout(() => {
                 navigate("/");
             }, 1500); // Wait for 2 seconds before redirecting
-        } catch (error) {
+        } catch (error: unknown) {
             console.error("Error:", error);
+            if (axios.isAxiosError(error) && error.response) {
+                if (error.response.status === 409) {
+                    setErrorMessage("Username already exists");
+                }
+            } else {
+                setErrorMessage("An error occurred. Please try again.");
+            }
         }
     };
 
@@ -52,8 +61,9 @@ const Register: React.FC = () => {
                 </div>
                 <div className={isVendor ? "large" : "small"}>Vendor</div>
             </div>
-            <div className={"text-field"}>
+            <div style={{ paddingBottom: 10 }}>
                 <TextField
+                    required={true}
                     id="username"
                     label="Username"
                     variant="outlined"
@@ -61,9 +71,10 @@ const Register: React.FC = () => {
                     onChange={(e) => setUsername(e.target.value)}
                 />
             </div>
-            <div className={"text-field"}>
+            <div style={{ paddingBottom: 30 }}>
                 <TextField
                     id="password"
+                    required={true}
                     label="Password"
                     variant="outlined"
                     type="password"
@@ -71,12 +82,17 @@ const Register: React.FC = () => {
                     onChange={(e) => setPassword(e.target.value)}
                 />
             </div>
-            <div className={"text-field"}>
-                <Button type="submit" variant="contained" color="primary">
+            {errorMessage && (
+                <div style={{ paddingBottom: 10, color: "red" }}>
+                    {errorMessage}
+                </div>
+            )}
+            <div style={{ paddingBottom: 10 }}>
+                <Button type="submit" variant="outlined" color="primary">
                     Submit
                 </Button>
             </div>
-            <div className={"text-field"}>
+            <div style={{ paddingBottom: 10 }}>
                 <Button
                     onClick={handleBackToLogin}
                     variant="text"

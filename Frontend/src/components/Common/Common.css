@@ -1,19 +1,20 @@
+/* for login and register */
 .role-switch-container {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 100px; /* Adjust the gap as needed */
-    width: 300px; /* Set a fixed width for the container */
-    margin: 0 auto; /* Center the container */
+    gap: 100px;
+    width: 300px;
+    margin: 0 auto;
     padding: 10px;
-    position: relative; /* Add this line */
+    position: relative;
     padding-bottom: 30px;
 }
 
 .switch {
-    position: absolute; /* Add this line */
-    left: 50%; /* Add this line */
-    transform: translateX(-50%); /* Add this line */
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .small {
@@ -32,16 +33,9 @@
         font-size 0.3s ease;
 }
 
-.text-field {
-    padding-bottom: 10px;
-}
-
-.create-account {
-    background: #92c0c9;
-}
-
+/* for dashboard */
 .user-details {
-    text-align: left;
+    text-align: center;
     margin: 3px;
 }
 
@@ -66,4 +60,12 @@
 
 .event-card:hover {
     transform: scale(1.05);
+}
+
+/* for event */
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 15px;
 }

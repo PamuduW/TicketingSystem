@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import API from "../../axios.tsx";
 import TextField from "@mui/material/TextField";
+import axios from "axios";
+
 
 interface SimInputFormProps {
     eventId: string;
@@ -31,12 +33,13 @@ const SimInputForm: React.FC<SimInputFormProps> = ({ eventId }) => {
                 inputs // Send the array directly
             );
             console.log("Response:", response.data);
-        } catch (error) {
+        } catch (error : unknown) {
+            if (axios.isAxiosError(error) && error.response) {
             if (error.response && error.response.status === 409) {
                 alert("The simulation is already running");
             } else {
                 console.error("Error:", error);
-            }
+            }}
         }
     };
 
@@ -44,13 +47,14 @@ const SimInputForm: React.FC<SimInputFormProps> = ({ eventId }) => {
         try {
             const response = await API.post(`/event/${eventId}/stopSim`);
             console.log("Response:", response.data);
-        } catch (error) {
+        } catch (error : unknown) {
+            if (axios.isAxiosError(error) && error.response) {
             if (error.response && error.response.status === 409) {
                 alert("The simulation is not running");
             } else {
                 console.error("Error:", error);
             }
-        }
+        }}
     };
 
     return (
