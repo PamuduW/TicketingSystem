@@ -130,20 +130,25 @@ const AddVendors: React.FC = () => {
 
     return (
         <div>
-            <h2 style={{margin : 50}}>Change Vendors</h2>
+            <h2 style={{ margin: 50 }}>Change Vendors</h2>
             <h3 className={"user-details"}>Current Vendors</h3>
             {event.vendors.map((vendorId) => (
                 <p key={vendorId} className={"user-details"}>
                     {vendorDetails[vendorId]?.username || "Loading..."}
                 </p>
             ))}
-            <h3 className={"user-details"} style={{marginTop : 30}}>All Vendors</h3>
+            <h3 className={"user-details"} style={{ marginTop: 30 }}>
+                All Vendors
+            </h3>
             <form>
                 {allVendors.map(
                     (vendor) =>
                         vendor.vendorId !== event.ownerId && (
-                            <div key={vendor.vendorId} className={"user-details"}>
-                                <label >
+                            <div
+                                key={vendor.vendorId}
+                                className={"user-details"}
+                            >
+                                <label>
                                     <input
                                         type="checkbox"
                                         id={vendor.vendorId}
@@ -163,7 +168,11 @@ const AddVendors: React.FC = () => {
                         )
                 )}
                 <div className={"buttons"}>
-                    <Button type="button" variant="outlined" onClick={handleChangeVendors}>
+                    <Button
+                        type="button"
+                        variant="outlined"
+                        onClick={handleChangeVendors}
+                    >
                         Change Vendors
                     </Button>
                 </div>

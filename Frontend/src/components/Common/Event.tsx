@@ -31,7 +31,9 @@ const Event: React.FC = () => {
     const userContext = useContext(UserContext);
     const navigate = useNavigate();
     const [event, setEvent] = useState<Event | null>(null);
-    const [vendorDetails, setVendorDetails] = useState<{ [key: string]: Vendor }>({});
+    const [vendorDetails, setVendorDetails] = useState<{
+        [key: string]: Vendor;
+    }>({});
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [vendorDrawerOpen, setVendorDrawerOpen] = useState(false);
     const [updateDrawerOpen, setUpdateDrawerOpen] = useState(false);
@@ -169,7 +171,7 @@ const Event: React.FC = () => {
                     ))}
                 </>
             )}
-            <div style={{marginTop : 15}}>
+            <div style={{ marginTop: 15 }}>
                 {userContext?.userData?.isVendor && (
                     <>
                         ---------------------------------------------------------------------------

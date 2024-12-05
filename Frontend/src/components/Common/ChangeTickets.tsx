@@ -13,7 +13,6 @@ const ChangeTickets: React.FC = () => {
     const [ticketCount, setTicketCount] = useState<number | "">("");
     const [errorMessage, setErrorMessage] = useState("");
 
-
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setTicketCount(parseInt(e.target.value, 10) || "");
     };
@@ -35,23 +34,33 @@ const ChangeTickets: React.FC = () => {
                 console.log("Response:", response.data);
                 alert("Tickets updated successfully");
                 navigate(`/event/${eventId}`);
-            } catch (error : unknown) {
+            } catch (error: unknown) {
                 console.error("Error:", error);
                 if (axios.isAxiosError(error) && error.response) {
-                    if (error.response.status === 409) {
+                    if (
+                        error.response.status === 409 &&
+                        error.response.data === "There are no tickets available"
+                    ) {
+                        setErrorMessage("Exceeded the available ticket limit");
+                    } else if (error.response.status === 409) {
                         setErrorMessage("Exceeded the ticket pool limit");
-                    }else if (error.response.status === 400) {
+                    } else if (error.response.status === 400) {
                         setErrorMessage("Exceeded the total ticket limit");
                     } else {
                         setErrorMessage("An error occurred. Please try again.");
-                    }}
+                    }
+                }
             }
         }
     };
 
     return (
-        <form onSubmit={handleSubmit} style={{textAlign : "center"}}>
-            {userContext?.userData?.isVendor ? <h2 style={{margin : 50}}>Add Tickets</h2> : <h2 style={{margin : 50}}>Buy Tickets</h2>}
+        <form onSubmit={handleSubmit} style={{ textAlign: "center" }}>
+            {userContext?.userData?.isVendor ? (
+                <h2 style={{ margin: 50 }}>Add Tickets</h2>
+            ) : (
+                <h2 style={{ margin: 50 }}>Buy Tickets</h2>
+            )}
             <div style={{ paddingBottom: 15 }}>
                 <TextField
                     required={true}
@@ -66,7 +75,9 @@ const ChangeTickets: React.FC = () => {
                     {errorMessage}
                 </div>
             )}
-            <Button variant="outlined" type="submit">Submit</Button>
+            <Button variant="outlined" type="submit">
+                Submit
+            </Button>
         </form>
     );
 };

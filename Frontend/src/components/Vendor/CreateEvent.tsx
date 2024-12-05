@@ -45,7 +45,9 @@ const CreateEvent: React.FC = () => {
     return (
         <div>
             <div className={"buttons"} style={{ marginTop: 20 }}>
-                <Button variant="text" onClick={handleBackToDashboard}>Back to Dashboard</Button>
+                <Button variant="text" onClick={handleBackToDashboard}>
+                    Back to Dashboard
+                </Button>
             </div>
             <h1>Create Event</h1>
             <form onSubmit={handleSubmit}>
@@ -93,7 +95,9 @@ const CreateEvent: React.FC = () => {
                     />
                 </div>
                 <div className={"buttons"}>
-                    <Button variant="outlined" type="submit">Create Event</Button>
+                    <Button variant="outlined" type="submit">
+                        Create Event
+                    </Button>
                 </div>
             </form>
         </div>

@@ -5,7 +5,6 @@ import API from "../../axios";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 
-
 interface Event {
     eventId: string;
     name: string;
@@ -79,8 +78,8 @@ const UpdateEvent: React.FC = () => {
     }
 
     return (
-        <div style={{textAlign : "center"}}>
-            <h2 style={{margin : 50}}>Update Event</h2>
+        <div style={{ textAlign: "center" }}>
+            <h2 style={{ margin: 50 }}>Update Event</h2>
             <form onSubmit={handleSubmit}>
                 <div style={{ paddingBottom: 20 }}>
                     <TextField
@@ -126,7 +125,9 @@ const UpdateEvent: React.FC = () => {
                         onChange={handleChange}
                     />
                 </div>
-                <Button variant="outlined" type="submit">Update Event</Button>
+                <Button variant="outlined" type="submit">
+                    Update Event
+                </Button>
             </form>
         </div>
     );

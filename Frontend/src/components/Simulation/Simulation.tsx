@@ -3,6 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import SimInputForm from "./SimInputForm.tsx";
 import SimLog from "./SimLog.tsx";
 import SimProgress from "./SimProgress.tsx";
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
 
 const Simulation: React.FC = () => {
     const { eventId } = useParams<{ eventId: string }>();
@@ -18,10 +20,24 @@ const Simulation: React.FC = () => {
 
     return (
         <>
-            <button onClick={handleBackToEvent}>Back to Event</button>
-            <SimInputForm eventId={eventId} />
-            <SimProgress />
-            <SimLog />
+            <Button variant="text" onClick={handleBackToEvent}>
+                Back to Event
+            </Button>
+            <h1>Simulation</h1>
+            <div style={{ margin: 50 }}></div>
+            <div
+                style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    gap: "20px",
+                }}
+            >
+                <SimInputForm eventId={eventId} />
+                <SimProgress />
+            </div>
+            <Box sx={{ height: 300, overflowY: "auto", marginTop: 2 }}>
+                <SimLog />
+            </Box>
         </>
     );
 };
