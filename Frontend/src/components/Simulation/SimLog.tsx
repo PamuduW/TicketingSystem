@@ -11,7 +11,9 @@ const SimLog: React.FC = () => {
         if (userContext?.userData) {
             // const vendorId = userContext.userData.userId;
             // const socket = new WebSocket(`ws://localhost:8080/ws/text`);
-            const socket = new WebSocket(`wss://ticketing---system-32a1f2f59169.herokuapp.com/ws/text`);
+            const socket = new WebSocket(
+                `wss://ticketing---system-32a1f2f59169.herokuapp.com/ws/text`
+            );
 
             socket.onopen = () => {
                 console.log("WebSocket connection established");

@@ -190,11 +190,11 @@ const Event: React.FC = () => {
                                 Simulate Event
                             </Button>
                         </div>
-                        ---------------------------------------------------------------------------
-                        <h3 style={{ margin: 1 }}>Owner Options</h3>
                         <div className={"buttons"}>
                             {userContext.userData.userId === event.ownerId && (
                                 <>
+                                    ---------------------------------------------------------------------------
+                                    <h3 style={{ margin: 1 }}>Owner Options</h3>
                                     <Button
                                         variant="outlined"
                                         onClick={handleAddVendors}
