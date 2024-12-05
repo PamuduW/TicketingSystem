@@ -9,14 +9,11 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class TextWebSocket extends TextWebSocketHandler {
-    private static final Logger logger = LoggerFactory.getLogger(TextWebSocket.class);
+public class IntegerWebSocketHandler extends TextWebSocketHandler {
+    private static final Logger logger = LoggerFactory.getLogger(IntegerWebSocketHandler.class);
     private static final CopyOnWriteArrayList<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override
     public void afterConnectionEstablished(@NonNull WebSocketSession session) {
@@ -32,7 +29,15 @@ public class TextWebSocket extends TextWebSocketHandler {
         try {
             String payload = message.getPayload();
             logger.info("Received message: {}", payload);
-            broadcast(payload);
+            // Assuming the payload contains two integers separated by a comma
+            String[] parts = payload.split(",");
+            if (parts.length == 2) {
+                int int1 = Integer.parseInt(parts[0].trim());
+                int int2 = Integer.parseInt(parts[1].trim());
+                broadcast(int1, int2);
+            } else {
+                logger.error("Invalid message format");
+            }
         } catch (Exception e) {
             logger.error("Error handling text message", e);
         }
@@ -47,12 +52,11 @@ public class TextWebSocket extends TextWebSocketHandler {
         }
     }
 
-    public static void broadcast(String message) {
-        String timestamp = LocalDateTime.now().format(formatter);
-        String messageWithTimestamp = "---[" + timestamp + "]" + message;
+    public static void broadcast(int int1, int int2) {
+        String message = int1 + "," + int2;
         for (WebSocketSession session : sessions) {
             try {
-                session.sendMessage(new TextMessage(messageWithTimestamp));
+                session.sendMessage(new TextMessage(message));
             } catch (IOException e) {
                 logger.error("Error broadcasting message", e);
             }

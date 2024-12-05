@@ -1,6 +1,6 @@
 package com.backend.ticketing_System.sim;
 
-import com.backend.ticketing_System.handler.TextWebSocket;
+import com.backend.ticketing_System.handler.TextWebSocketHandler;
 import lombok.Setter;
 
 import java.util.Random;
@@ -46,7 +46,7 @@ public class CustomerSim implements Runnable{
                     eventSim.retrieveTickets(customerName, ticketsToRetrieve, finalTransaction);
 
                     if (finalTransaction && !messagePrinted) {
-                        TextWebSocket.broadcast("--- Customer " + customerName + " --- Retrieved the last available tickets. \n\s\s\sEnding simulation.");
+                        TextWebSocketHandler.broadcast("--- Customer " + customerName + " --- Retrieved the last available tickets. \n\s\s\sEnding simulation.");
                         Sim.stopSimulation(false);
                         messagePrinted = true;
                         break;

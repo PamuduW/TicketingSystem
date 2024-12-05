@@ -2,6 +2,7 @@ import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import SimInputForm from "./SimInputForm.tsx";
 import SimLog from "./SimLog.tsx";
+import SimProgress from "./SimProgress.tsx";
 
 const Simulation: React.FC = () => {
     const { eventId } = useParams<{ eventId: string }>();
@@ -19,6 +20,7 @@ const Simulation: React.FC = () => {
         <>
             <button onClick={handleBackToEvent}>Back to Event</button>
             <SimInputForm eventId={eventId} />
+            <SimProgress />
             <SimLog />
         </>
     );

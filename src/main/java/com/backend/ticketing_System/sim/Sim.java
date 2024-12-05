@@ -1,6 +1,6 @@
 package com.backend.ticketing_System.sim;
 
-import com.backend.ticketing_System.handler.TextWebSocket;
+import com.backend.ticketing_System.handler.TextWebSocketHandler;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,7 +49,7 @@ public class Sim {
                 customerThread.start();
             }
             System.out.println("Simulation started.");
-            TextWebSocket.broadcast("--- Simulation started.");
+            TextWebSocketHandler.broadcast("--- Simulation started.");
         } finally {
             lock.unlock();
         }
@@ -72,7 +72,7 @@ public class Sim {
             isRunning = false;
             if (message) {
                 System.out.println("Simulation stopped by the user.");
-                TextWebSocket.broadcast("--- Simulation stopped by the user.");
+                TextWebSocketHandler.broadcast("--- Simulation stopped by the user.");
             }
         } finally {
             lock.unlock();

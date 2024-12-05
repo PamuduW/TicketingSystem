@@ -1,6 +1,6 @@
 package com.backend.ticketing_System.sim;
 
-import com.backend.ticketing_System.handler.TextWebSocket;
+import com.backend.ticketing_System.handler.TextWebSocketHandler;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -44,7 +44,7 @@ public class VendorSim implements Runnable {
                     Thread.sleep(simulationSpeed);
                     if (totalTicketsAdded == totalTicketLimit) {
                         if (!messagePrinted) {
-                            TextWebSocket.broadcast("--- All vendors have reached the ticket limit and stopped interacting.");
+                            TextWebSocketHandler.broadcast("--- All vendors have reached the ticket limit and stopped interacting.");
                             Sim.activeVendors = false;
                             messagePrinted = true;
                         }
