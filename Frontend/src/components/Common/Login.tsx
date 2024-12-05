@@ -6,6 +6,7 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Switch from "@mui/material/Switch";
 import { UserContext } from "./UserContext";
+import "./Common.css";
 
 const Login: React.FC = () => {
     const [username, setUsername] = useState("");
@@ -61,13 +62,21 @@ const Login: React.FC = () => {
 
     return (
         <form onSubmit={handleSubmit}>
-            <Switch
-                checked={isVendor}
-                onChange={(e) => setIsVendor(e.target.checked)}
-                name="roleSwitch"
-                inputProps={{ "aria-label": "role switch" }}
-            />
-            <div>
+            <h1>Login</h1>
+            <div className="role-switch-container">
+                <div className={isVendor ? "small" : "large"}>Customer</div>
+                <div className="switch">
+                    <Switch
+                        color="default"
+                        checked={isVendor}
+                        onChange={(e) => setIsVendor(e.target.checked)}
+                        name="roleSwitch"
+                        inputProps={{ "aria-label": "role switch" }}
+                    />
+                </div>
+                <div className={isVendor ? "large" : "small"}>Vendor</div>
+            </div>
+            <div className={"text-field"}>
                 <TextField
                     id="username"
                     label="Username"
@@ -76,7 +85,7 @@ const Login: React.FC = () => {
                     onChange={(e) => setUsername(e.target.value)}
                 />
             </div>
-            <div>
+            <div className={"text-field"}>
                 <TextField
                     id="password"
                     label="Password"
@@ -86,14 +95,20 @@ const Login: React.FC = () => {
                     onChange={(e) => setPassword(e.target.value)}
                 />
             </div>
-            {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
-            <Button type="submit" variant="contained" color="primary">
-                Submit
-            </Button>
-            <div>
+            {errorMessage && (
+                <div className={"text-field"} style={{ color: "red" }}>
+                    {errorMessage}
+                </div>
+            )}
+            <div className={"text-field"}>
+                <Button type="submit" variant="contained" color="primary">
+                    Submit
+                </Button>
+            </div>
+            <div className={"text-field"}>
                 <Button
                     onClick={handleCreateProfile}
-                    variant="contained"
+                    variant="text"
                     color="primary"
                 >
                     Create Account

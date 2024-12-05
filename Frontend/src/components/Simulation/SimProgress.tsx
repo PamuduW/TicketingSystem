@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { UserContext } from "../Common/UserContext";
-import { LineChart } from '@mui/x-charts/LineChart';
+import { LineChart } from "@mui/x-charts/LineChart";
 
 const SimProgress: React.FC = () => {
     const userContext = useContext(UserContext);
@@ -23,11 +23,17 @@ const SimProgress: React.FC = () => {
                 const newCurrentTickets = parts.slice(0, half);
                 const newAllSoldTickets = parts.slice(half);
 
-                setCurrentTickets((prevTickets) => [...prevTickets, ...newCurrentTickets]);
-                setAllSoldTickets((prevTickets) => [...prevTickets, ...newAllSoldTickets]);
+                setCurrentTickets((prevTickets) => [
+                    ...prevTickets,
+                    ...newCurrentTickets,
+                ]);
+                setAllSoldTickets((prevTickets) => [
+                    ...prevTickets,
+                    ...newAllSoldTickets,
+                ]);
                 setXLabels((prevLabels) => [
                     ...prevLabels,
-                    `Update ${prevLabels.length + 1}`
+                    `Update ${prevLabels.length + 1}`,
                 ]);
             };
 
@@ -51,12 +57,11 @@ const SimProgress: React.FC = () => {
                 width={1000}
                 height={500}
                 series={[
-                    { data: allSoldTickets, label: 'All Sold Tickets' },
-                    { data: currentTickets, label: 'Current Tickets' },
+                    { data: allSoldTickets, label: "All Sold Tickets" },
+                    { data: currentTickets, label: "Current Tickets" },
                 ]}
-                xAxis={[{ scaleType: 'point', data: xLabels }]}
+                xAxis={[{ scaleType: "point", data: xLabels }]}
             />
-
         </div>
     );
 };

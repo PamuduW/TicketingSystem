@@ -72,7 +72,9 @@ const SimInputForm: React.FC<SimInputFormProps> = ({ eventId }) => {
                 </div>
             ))}
             <button type="submit">Start Sim</button>
-            <button type="button" onClick={handleStopSim}>Stop Sim</button>
+            <button type="button" onClick={handleStopSim}>
+                Stop Sim
+            </button>
         </form>
     );
 };

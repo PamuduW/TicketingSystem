@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { UserContext } from "./UserContext";
 import API from "../../axios";
+import Button from "@mui/material/Button";
 
 interface Event {
     eventId: string;
@@ -106,27 +107,56 @@ const Event: React.FC = () => {
 
     return (
         <div>
+            <div className={"user-details"}>
+                <Button onClick={handleBackToDashboard}>
+                    Back to Dashboard
+                </Button>
+            </div>
             <h1>{event.name}</h1>
-            <p>{event.desc}</p>
+
+            <p className={"user-details"}>
+                Event Description&#160;&#160;&#160;&#160;&#160;&#160;:{" "}
+                {event.desc}
+            </p>
             {userContext?.userData?.isVendor && (
                 <>
-                    <p>
-                        Owner:{" "}
+                    <p className={"user-details"}>
+                        Owner&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;:{" "}
                         {vendorDetails[event.ownerId]?.username || "Loading..."}
                     </p>
                 </>
             )}
-            <p>Total Tickets: {event.totalTickets}</p>
-            <p>Max Capacity: {event.maxCapacity}</p>
-            <p>Current Tickets: {event.currentTickets}</p>
-            <p>Issued Tickets: {event.issuedTickets}</p>
-            <p>Total Tickets Added: {event.totalTicketsAdded}</p>
+            <p className={"user-details"}>
+                Total
+                Tickets&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;:{" "}
+                {event.totalTickets}
+            </p>
+            <p className={"user-details"}>
+                Max
+                Capacity&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;:{" "}
+                {event.maxCapacity}
+            </p>
+            <p className={"user-details"}>
+                Current
+                Tickets&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;:{" "}
+                {event.currentTickets}
+            </p>
+            <p className={"user-details"}>
+                Issued
+                Tickets&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;:{" "}
+                {event.issuedTickets}
+            </p>
+            <p className={"user-details"}>
+                Total Tickets Added&#160;&#160;: {event.totalTicketsAdded}
+            </p>
             {userContext?.userData?.userId === event.ownerId && (
                 <>
-                    <h3>Vendors</h3>
-                    <ul>
+                    <h3 className={"user-details"} style={{ paddingTop: 16 }}>
+                        Vendors
+                    </h3>
+                    <ul style={{ marginTop: 1 }}>
                         {event.vendors.map((vendorId) => (
-                            <li key={vendorId}>
+                            <li className={"user-details"} key={vendorId}>
                                 {vendorDetails[vendorId]?.username ||
                                     "Loading..."}
                             </li>
@@ -137,22 +167,47 @@ const Event: React.FC = () => {
             <div>
                 {userContext?.userData?.isVendor && (
                     <>
-                        <button onClick={handleSimulateEvent}>
-                            Simulate Event
-                        </button>
-                        <button onClick={handleAddTickets}>Add Tickets</button>
-                        {userContext.userData.userId === event.ownerId && (
-                            <button onClick={handleAddVendors}>
-                                Change Vendors
-                            </button>
-                        )}
+                        <div>
+                            <Button
+                                variant="outlined"
+                                onClick={handleAddTickets}
+                            >
+                                Add Tickets
+                            </Button>
+                        </div>
+                        <div>
+                            <Button
+                                variant="outlined"
+                                onClick={handleSimulateEvent}
+                            >
+                                Simulate Event
+                            </Button>
+                        </div>
+                        <div>
+                            {userContext.userData.userId === event.ownerId && (
+                                <>
+                                    <Button
+                                        variant="outlined"
+                                        onClick={handleAddVendors}
+                                    >
+                                        Change Vendors
+                                    </Button>
+                                    <Button
+                                        variant="outlined"
+                                        onClick={handleUpdateEvent}
+                                    >
+                                        Update Event
+                                    </Button>
+                                </>
+                            )}
+                        </div>
                     </>
                 )}
                 {!userContext?.userData?.isVendor && (
-                    <button onClick={handleBuyTickets}>Buy Tickets</button>
+                    <Button variant="outlined" onClick={handleBuyTickets}>
+                        Buy Tickets
+                    </Button>
                 )}
-                <button onClick={handleBackToDashboard}>Back to Dashboard</button>
-                <button onClick={handleUpdateEvent}>Update Event</button>
             </div>
         </div>
     );

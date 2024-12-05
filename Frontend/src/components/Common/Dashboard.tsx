@@ -2,6 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "./UserContext";
 import API from "../../axios";
+import "./Common.css";
+import Button from "@mui/material/Button";
 
 interface Event {
     eventId: string;
@@ -62,22 +64,37 @@ const Dashboard: React.FC = () => {
             <h1>Dashboard</h1>
             {userContext && userContext.userData ? (
                 <div>
-                    <h2>Welcome, {userContext.userData.username}</h2>
-                    <p>Id: {userContext.userData.userId}</p>
-                    <p>
+                    <h3 className={"user-details"}>
+                        Welcome, {userContext.userData.username}
+                    </h3>
+                    <p className={"user-details"}>
+                        Id: {userContext.userData.userId}
+                    </p>
+                    <p className={"user-details"}>
                         Role:{" "}
                         {userContext.userData.isVendor ? "Vendor" : "Customer"}
                     </p>
-                    <button onClick={handleCreateEventClick}>
-                        Create an Event
-                    </button>
-                    <button onClick={handleLogout}>Logout</button>
-                    <h3>Events</h3>
+                    <div className={"user-details"}>
+                        <Button variant="outlined" onClick={handleLogout}>
+                            Logout
+                        </Button>
+                    </div>
+                    <div className={"user-details"}>
+                        <Button
+                            variant="contained"
+                            onClick={handleCreateEventClick}
+                        >
+                            Create an Event
+                        </Button>
+                    </div>
+
+                    <h2>Events</h2>
                     {events.length > 0 ? (
-                        <ul>
+                        <div className={"events-grid"}>
                             {events.map((event) => (
-                                <li
+                                <div
                                     key={event.eventId}
+                                    className="event-card"
                                     onClick={() =>
                                         handleEventClick(event.eventId)
                                     }
@@ -96,9 +113,9 @@ const Dashboard: React.FC = () => {
                                         Total Tickets Added:{" "}
                                         {event.totalTicketsAdded}
                                     </p>
-                                </li>
+                                </div>
                             ))}
-                        </ul>
+                        </div>
                     ) : (
                         <p>No events available.</p>
                     )}
