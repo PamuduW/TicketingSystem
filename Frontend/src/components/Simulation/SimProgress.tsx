@@ -54,6 +54,8 @@ const SimProgress: React.FC = () => {
         }
     }, [userContext]);
 
+    const allAddedTickets = currentTickets.map((ticket, index) => ticket + (allSoldTickets[index] || 0));
+
     return (
         <div>
             <LineChart
@@ -62,6 +64,7 @@ const SimProgress: React.FC = () => {
                 series={[
                     { data: allSoldTickets, label: "All Sold Tickets" },
                     { data: currentTickets, label: "Current Tickets" },
+                    { data: allAddedTickets, label: "All Added Tickets" },
                 ]}
                 xAxis={[{ scaleType: "point", data: xLabels }]}
             />

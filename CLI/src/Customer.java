@@ -2,7 +2,7 @@ import java.util.Random;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Customer implements Runnable {
-    private final String customerName; // Name of the customer
+    private String customerName; // Name of the customer
     private final int customerRetrievalRate; // Maximum number of tickets the customer can retrieve
     private final int simulationSpeed; // Speed of the simulation for the customer
     private final TicketPool ticketPool; // Ticket pool from which the customer retrieves tickets
@@ -19,6 +19,10 @@ public class Customer implements Runnable {
         this.ticketPool = ticketPool;
         this.console = console;
         this.simulationSpeed = simulationSpeed;
+    }
+
+    protected void setCustomerName(String customerName) {
+        this.customerName = customerName;
     }
 
     // Method to set the customer count

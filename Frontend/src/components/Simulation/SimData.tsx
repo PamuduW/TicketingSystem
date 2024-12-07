@@ -3,6 +3,7 @@ import { UserContext } from "../Common/UserContext";
 import API from "../../axios.tsx";
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
+import Chip from '@mui/material/Chip';
 
 interface SimDataProps {
     eventId: string;
@@ -95,9 +96,14 @@ const SimData: React.FC<SimDataProps> = ({ eventId }) => {
     return (
         <div>
             <h2>Simulation Data</h2>
+            <div>
+                <Chip label="Running" color="success" variant="outlined" />
+            </div>
+            <h3>Static Data</h3>
             <div>Event Name - {event.name}</div>
             <div>Total Tickets - {event.totalTickets}</div>
             <div>Max Capacity - {event.maxCapacity}</div>
+            <h3>Dynamic Data</h3>
             <div>
                 Current Ticket Count -{" "}
                 {currentTickets.length === 0 ? "Loading..." : currentTickets}
@@ -107,11 +113,13 @@ const SimData: React.FC<SimDataProps> = ({ eventId }) => {
                 {allSoldTickets.length === 0 ? "Loading..." : allSoldTickets}
             </div>
             <div>All Added Ticket Count - {allAddedTickets}</div>
-            <Box sx={{ width: "100%" }}>
+            <h2>Progress</h2>
+            <Box sx={{ width: "100%"}}>
                 <LinearProgress
                     variant="buffer"
                     value={progress}
                     valueBuffer={buffer}
+
                 />
             </Box>
         </div>

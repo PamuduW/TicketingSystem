@@ -40,7 +40,7 @@ const SimLog: React.FC = () => {
     return (
         <div>
             <h2>WebSocket Messages</h2>
-            <ul>
+            <ul style={{textAlign: "left"}}>
                 {messages.map((message, index) => (
                     <li key={index}>{message}</li>
                 ))}

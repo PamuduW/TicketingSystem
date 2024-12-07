@@ -2,13 +2,14 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class Main {
-    private static final ArrayList<Thread> vendorThreads = new ArrayList<>();
-    private static final ArrayList<Thread> customerThreads = new ArrayList<>();
+    private static ThreadPoolExecutor threadPoolExecutor;
     private static final ReentrantLock lock = new ReentrantLock();
     private static int totalTickets;
     private static int vendorReleaseRate;
@@ -129,6 +130,7 @@ public class Main {
         }
         System.out.println("\n--- Simulation Configuration ---");
         int noOfVendors = getInput("Enter Number of Vendors simulated : ");
+        int noOfVIPCustomers = getInput("Enter Number of VIP Customers simulated : ");
         int noOfCustomers = getInput("Enter Number of Customers simulated : ");
         int vendorSpeed = getInput("Enter Vendor interaction Speed (in ms) : ");
         int customerSpeed = getInput("Enter Customer interaction Speed (in ms) : ");
@@ -150,17 +152,21 @@ public class Main {
         Customer.setFinalTransaction(false);
         Customer.setMessagePrinted(false);
 
-        // Start vendor threads
+        threadPoolExecutor = new ThreadPoolExecutor(
+                noOfVendors + noOfVIPCustomers + noOfCustomers,
+                noOfVendors + noOfVIPCustomers + noOfCustomers,
+                0L, TimeUnit.MILLISECONDS,
+                new PriorityBlockingQueue<>()
+        );
+
         for (int i = 0; i < noOfVendors; i++) {
-            Thread vendorThread = new Thread(new Vendor(vendorReleaseRate, ticketPool, console, vendorSpeed));
-            vendorThreads.add(vendorThread);
-            vendorThread.start();
+            threadPoolExecutor.submit(new Vendor(vendorReleaseRate, ticketPool, console, vendorSpeed));
         }
-        // Start customer threads
         for (int i = 0; i < noOfCustomers; i++) {
-            Thread customerThread = new Thread(new Customer(customerRetrievalRate, ticketPool, console, customerSpeed));
-            customerThreads.add(customerThread);
-            customerThread.start();
+            threadPoolExecutor.submit(new CustomerTask(new Customer(customerRetrievalRate, ticketPool, console, customerSpeed), false));
+        }
+        for (int i = 0; i < noOfVIPCustomers; i++) {
+            threadPoolExecutor.submit(new CustomerTask(new VIPCustomer(customerRetrievalRate, ticketPool, console, customerSpeed), true));
         }
         System.out.println("Simulation started.");
     }
@@ -175,10 +181,7 @@ public class Main {
             }
 
             // Interrupt all vendor and customer threads
-            vendorThreads.forEach(Thread::interrupt);
-            customerThreads.forEach(Thread::interrupt);
-            vendorThreads.clear();
-            customerThreads.clear();
+            threadPoolExecutor.shutdownNow();
 
             isRunning = false;
             if (message) {
