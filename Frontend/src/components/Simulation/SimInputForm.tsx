@@ -10,6 +10,7 @@ interface SimInputFormProps {
 
 const SimInputForm: React.FC<SimInputFormProps> = ({ eventId }) => {
     const [inputs, setInputs] = useState<number[]>(Array(6).fill(""));
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const qNames = [
         "vendor release rate",
         "customer retrieval rate",
@@ -27,6 +28,13 @@ const SimInputForm: React.FC<SimInputFormProps> = ({ eventId }) => {
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
+        for (let i = 0; i < inputs.length; i++) {
+            if (inputs[i] < 0) {
+                setErrorMessage("Cannot enter negative numbers");
+                return;
+            }
+        }
+        setErrorMessage(null);
         console.log("Sending data:", inputs); // Log the data being sent
         try {
             const response = await API.post(
@@ -75,6 +83,11 @@ const SimInputForm: React.FC<SimInputFormProps> = ({ eventId }) => {
                     />
                 </div>
             ))}
+            {errorMessage && (
+                <div style={{ marginBottom: 10, color: "red" }}>
+                    {errorMessage}
+                </div>
+            )}
             <div>
                 <Button
                     variant="outlined"

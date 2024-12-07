@@ -11,6 +11,7 @@ interface Event {
     desc: string;
     totalTickets: number;
     maxCapacity: number;
+    issuedTickets: number;
 }
 
 const UpdateEvent: React.FC = () => {
@@ -24,6 +25,7 @@ const UpdateEvent: React.FC = () => {
         totalTickets: 0,
         maxCapacity: 0,
     });
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchEvent = async () => {
@@ -61,6 +63,21 @@ const UpdateEvent: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (formData.totalTickets < 0 || formData.maxCapacity < 0) {
+            setError("Cannot enter negative numbers");
+            return;
+        }
+        if (formData.totalTickets < event!.issuedTickets) {
+            setError(
+                `Total tickets cannot be less than issued tickets (${event!.issuedTickets})`
+            );
+            return;
+        }
+        if (formData.maxCapacity > formData.totalTickets) {
+            setError("Max capacity cannot be greater than total tickets");
+            return;
+        }
+        setError(null);
         try {
             await API.put(`/event/${eventId}`, formData, {
                 headers: {
@@ -81,6 +98,9 @@ const UpdateEvent: React.FC = () => {
         <div style={{ textAlign: "center" }}>
             <h2 style={{ margin: 50 }}>Update Event</h2>
             <form onSubmit={handleSubmit}>
+                {error && (
+                    <p style={{ marginBottom: 10, color: "red" }}>{error}</p>
+                )}
                 <div style={{ paddingBottom: 20 }}>
                     <TextField
                         required={true}

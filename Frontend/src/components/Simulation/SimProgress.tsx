@@ -54,7 +54,9 @@ const SimProgress: React.FC = () => {
         }
     }, [userContext]);
 
-    const allAddedTickets = currentTickets.map((ticket, index) => ticket + (allSoldTickets[index] || 0));
+    const allAddedTickets = currentTickets.map(
+        (ticket, index) => ticket + (allSoldTickets[index] || 0)
+    );
 
     return (
         <div>

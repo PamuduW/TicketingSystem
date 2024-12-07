@@ -19,6 +19,10 @@ const ChangeTickets: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (typeof ticketCount === "number" && ticketCount < 0) {
+            setErrorMessage("Cannot enter negative numbers");
+            return;
+        }
         if (userContext?.userData && ticketCount !== "") {
             const userId = userContext.userData.userId;
             const isVendor = userContext.userData.isVendor;
@@ -71,7 +75,7 @@ const ChangeTickets: React.FC = () => {
                 />
             </div>
             {errorMessage && (
-                <div style={{ paddingBottom: 10, color: "red" }}>
+                <div style={{ marginBottom: 10, color: "red" }}>
                     {errorMessage}
                 </div>
             )}

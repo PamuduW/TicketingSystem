@@ -3,7 +3,7 @@ import { UserContext } from "../Common/UserContext";
 import API from "../../axios.tsx";
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
-import Chip from '@mui/material/Chip';
+import Chip from "@mui/material/Chip";
 
 interface SimDataProps {
     eventId: string;
@@ -94,11 +94,23 @@ const SimData: React.FC<SimDataProps> = ({ eventId }) => {
 
     const getChipProps = () => {
         if (allSoldTickets.length === 0) {
-            return { label: "Not Started", color: "warning" as "warning" | "primary" | "success" };
-        } else if (allSoldTickets.reduce((acc, ticket) => acc + ticket, 0) === event.totalTickets) {
-            return { label: "Finished", color: "primary" as "warning" | "primary" | "success" };
+            return {
+                label: "Not Started",
+                color: "warning" as "warning" | "primary" | "success",
+            };
+        } else if (
+            allSoldTickets.reduce((acc, ticket) => acc + ticket, 0) ===
+            event.totalTickets
+        ) {
+            return {
+                label: "Finished",
+                color: "primary" as "warning" | "primary" | "success",
+            };
         } else {
-            return { label: "Running", color: "success" as "warning" | "primary" | "success" };
+            return {
+                label: "Running",
+                color: "success" as "warning" | "primary" | "success",
+            };
         }
     };
 
@@ -108,7 +120,11 @@ const SimData: React.FC<SimDataProps> = ({ eventId }) => {
         <div>
             <h2>Simulation Data</h2>
             <div>
-                <Chip label={chipProps.label} color={chipProps.color} variant="outlined" />
+                <Chip
+                    label={chipProps.label}
+                    color={chipProps.color}
+                    variant="outlined"
+                />
             </div>
             <h3>Static Data</h3>
             <div>Event Name - {event.name}</div>
@@ -125,7 +141,7 @@ const SimData: React.FC<SimDataProps> = ({ eventId }) => {
             </div>
             <div>All Added Ticket Count - {allAddedTickets}</div>
             <h2>Progress</h2>
-            <Box sx={{ width: "100%"}}>
+            <Box sx={{ width: "100%" }}>
                 <LinearProgress
                     variant="buffer"
                     value={progress}
