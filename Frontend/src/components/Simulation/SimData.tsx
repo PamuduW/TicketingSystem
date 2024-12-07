@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useContext } from "react";
 import { UserContext } from "../Common/UserContext";
 import API from "../../axios.tsx";
+import Box from "@mui/material/Box";
+import LinearProgress from "@mui/material/LinearProgress";
 
 interface SimDataProps {
     eventId: string;
@@ -79,20 +81,39 @@ const SimData: React.FC<SimDataProps> = ({ eventId }) => {
         return <p>Loading...</p>;
     }
 
-    const totalTickets =
+    const allAddedTickets =
         currentTickets.reduce((acc, ticket) => acc + ticket, 0) +
         allSoldTickets.reduce((acc, ticket) => acc + ticket, 0);
 
+    const progress =
+        (allSoldTickets.reduce((acc, ticket) => acc + ticket, 0) /
+            event.totalTickets) *
+        100;
+
+    const buffer = (allAddedTickets / event.totalTickets) * 100;
+
     return (
         <div>
-            {event.name}
-            ----------------
-            {event.totalTickets}
-            ----------------
-            {event.maxCapacity}
-            ---------------- currentTickets: {currentTickets}
-            ---------------- allSoldTickets: {allSoldTickets}
-            ---------------- allAddedTickets: {totalTickets}
+            <h2>Simulation Data</h2>
+            <div>Event Name - {event.name}</div>
+            <div>Total Tickets - {event.totalTickets}</div>
+            <div>Max Capacity - {event.maxCapacity}</div>
+            <div>
+                Current Ticket Count -{" "}
+                {currentTickets.length === 0 ? "Loading..." : currentTickets}
+            </div>
+            <div>
+                All Sold Ticket Count -{" "}
+                {allSoldTickets.length === 0 ? "Loading..." : allSoldTickets}
+            </div>
+            <div>All Added Ticket Count - {allAddedTickets}</div>
+            <Box sx={{ width: "100%" }}>
+                <LinearProgress
+                    variant="buffer"
+                    value={progress}
+                    valueBuffer={buffer}
+                />
+            </Box>
         </div>
     );
 };

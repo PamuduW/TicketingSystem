@@ -61,6 +61,7 @@ const SimInputForm: React.FC<SimInputFormProps> = ({ eventId }) => {
 
     return (
         <form onSubmit={handleSubmit}>
+            <h2>Simulation Configuration</h2>
             {inputs.map((input, index) => (
                 <div key={index} style={{ marginBottom: 20 }}>
                     <TextField
