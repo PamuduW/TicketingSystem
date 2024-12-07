@@ -11,5 +11,5 @@ server:
 
 frontend:
   url:
-    -https://ticketingsystemfrontend.netlify.app/
+    -https://vercel.com/pamuduws-projects/ticketing-system/4wvpzemRnB11JbvhmLHehdWwMVwU/
     -http://localhost:5173
