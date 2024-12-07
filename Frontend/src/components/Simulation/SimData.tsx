@@ -79,9 +79,9 @@ const SimData: React.FC<SimDataProps> = ({ eventId }) => {
         return <p>Loading...</p>;
     }
 
-    const totalTickets = currentTickets.reduce((acc, ticket) => acc + ticket, 0) +
+    const totalTickets =
+        currentTickets.reduce((acc, ticket) => acc + ticket, 0) +
         allSoldTickets.reduce((acc, ticket) => acc + ticket, 0);
-
 
     return (
         <div>
@@ -90,14 +90,9 @@ const SimData: React.FC<SimDataProps> = ({ eventId }) => {
             {event.totalTickets}
             ----------------
             {event.maxCapacity}
-            ----------------
-            currentTickets: {currentTickets}
-            ----------------
-            allSoldTickets: {allSoldTickets}
-            ----------------
-            allAddedTickets: {totalTickets}
-
-
+            ---------------- currentTickets: {currentTickets}
+            ---------------- allSoldTickets: {allSoldTickets}
+            ---------------- allAddedTickets: {totalTickets}
         </div>
     );
 };

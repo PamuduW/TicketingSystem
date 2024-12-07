@@ -34,7 +34,7 @@ const Simulation: React.FC = () => {
                 }}
             >
                 <SimInputForm eventId={eventId} />
-                <SimData eventId={eventId}/>
+                <SimData eventId={eventId} />
             </div>
             <SimProgress />
             <Box sx={{ height: 300, overflowY: "auto", marginTop: 2 }}>

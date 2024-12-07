@@ -193,27 +193,27 @@ const Event: React.FC = () => {
                         <div style={{ marginTop: 15 }}>
                             {userContext.userData.userId === event.ownerId && (
                                 <>
-                                ---------------------------------------------------------------------------
-                                <h3 style={{ margin: 1 }}>Owner Options</h3>
-                                <div className={"buttons"}>
-                                    <Button
-                                        variant="outlined"
-                                        onClick={handleAddVendors}
-                                    >
-                                        Change Vendors
-                                    </Button>
-                                    <Button
-                                        variant="outlined"
-                                        onClick={handleUpdateEvent}
-                                    >
-                                        Update Event
-                                    </Button>
-                                </div>
+                                    ---------------------------------------------------------------------------
+                                    <h3 style={{ margin: 1 }}>Owner Options</h3>
+                                    <div className={"buttons"}>
+                                        <Button
+                                            variant="outlined"
+                                            onClick={handleAddVendors}
+                                        >
+                                            Change Vendors
+                                        </Button>
+                                        <Button
+                                            variant="outlined"
+                                            onClick={handleUpdateEvent}
+                                        >
+                                            Update Event
+                                        </Button>
+                                    </div>
                                 </>
-                                )}
-                                </div>
-                                </>
-                                )}
+                            )}
+                        </div>
+                    </>
+                )}
                 {!userContext?.userData?.isVendor && (
                     <div style={{ marginTop: 10 }}>
                         ---------------------------------------------------------------------------
