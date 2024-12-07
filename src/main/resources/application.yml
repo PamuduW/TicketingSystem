@@ -11,5 +11,5 @@ server:
 
 frontend:
   url:
-    -https://ticketing-system-wheat.vercel.app/
+    -https://ticketing-system-git-main-pamuduws-projects.vercel.app/
     -http://localhost:5173
