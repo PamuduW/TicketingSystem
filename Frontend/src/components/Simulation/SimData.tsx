@@ -44,7 +44,6 @@ const SimData: React.FC<SimDataProps> = ({ eventId }) => {
 
     useEffect(() => {
         if (userContext?.userData) {
-            // const socket = new WebSocket(`ws://localhost:8080/ws/integers`);
             const socket = new WebSocket(
                 `wss://ticketing---system-32a1f2f59169.herokuapp.com/ws/integers`
             );
@@ -95,11 +94,11 @@ const SimData: React.FC<SimDataProps> = ({ eventId }) => {
 
     const getChipProps = () => {
         if (allSoldTickets.length === 0) {
-            return { label: "Not Started", color: "warning" };
+            return { label: "Not Started", color: "warning" as "warning" | "primary" | "success" };
         } else if (allSoldTickets.reduce((acc, ticket) => acc + ticket, 0) === event.totalTickets) {
-            return { label: "Finished", color: "primary" };
+            return { label: "Finished", color: "primary" as "warning" | "primary" | "success" };
         } else {
-            return { label: "Running", color: "success" };
+            return { label: "Running", color: "success" as "warning" | "primary" | "success" };
         }
     };
 
@@ -109,7 +108,6 @@ const SimData: React.FC<SimDataProps> = ({ eventId }) => {
         <div>
             <h2>Simulation Data</h2>
             <div>
-                // @ts-ignore ignore this error
                 <Chip label={chipProps.label} color={chipProps.color} variant="outlined" />
             </div>
             <h3>Static Data</h3>
@@ -132,7 +130,6 @@ const SimData: React.FC<SimDataProps> = ({ eventId }) => {
                     variant="buffer"
                     value={progress}
                     valueBuffer={buffer}
-
                 />
             </Box>
         </div>
