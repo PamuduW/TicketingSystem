@@ -112,7 +112,7 @@ public class EventController {
     @PostMapping("/event/{id}/startSim")
     public ResponseEntity<?> startSimulation(@PathVariable String id, @RequestBody List<Integer> data) {
         try {
-            eventService.startSimulation(id, data.get(0), data.get(1), data.get(2), data.get(3), data.get(4));
+            eventService.startSimulation(id, data.get(0), data.get(1), data.get(2), data.get(3), data.get(4), data.get(5));
             return ResponseEntity.ok().build();
         } catch (IOException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);

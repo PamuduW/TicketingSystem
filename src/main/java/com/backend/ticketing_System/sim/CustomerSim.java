@@ -7,7 +7,8 @@ import java.util.Random;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class CustomerSim implements Runnable{
-    private final String customerName;
+    @Setter
+    private String customerName;
     private final int customerRetrievalRate;
     @Setter
     private static int simulationSpeed;

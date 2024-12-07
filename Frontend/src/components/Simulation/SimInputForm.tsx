@@ -9,12 +9,13 @@ interface SimInputFormProps {
 }
 
 const SimInputForm: React.FC<SimInputFormProps> = ({ eventId }) => {
-    const [inputs, setInputs] = useState<number[]>(Array(5).fill(""));
+    const [inputs, setInputs] = useState<number[]>(Array(6).fill(""));
     const qNames = [
         "vendor release rate",
         "customer retrieval rate",
         "no of vendors",
         "no of customers",
+        "no of VIP customers",
         "simulation speed (ms)",
     ];
 

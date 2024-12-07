@@ -180,13 +180,13 @@ public class EventService {
         }
     }
 
-    public void startSimulation(String eventID, int vendorReleaseRate, int customerRetrievalRate, int noOfVendors, int noOfCustomers, int simSpeed) throws IOException {
+    public void startSimulation(String eventID, int vendorReleaseRate, int customerRetrievalRate, int noOfVendors, int noOfCustomers, int noOfVIPCustomers, int simSpeed) throws IOException {
         lock.lock();
         try {
             if (eventRepo.findById(eventID).isPresent()) {
                 int totalTickets = eventRepo.findById(eventID).get().getTotalTickets();
                 int maxTicketCapacity = eventRepo.findById(eventID).get().getMaxCapacity();
-                if (!Sim.startSimulation(totalTickets, vendorReleaseRate, customerRetrievalRate, maxTicketCapacity, noOfVendors, noOfCustomers, simSpeed))
+                if (!Sim.startSimulation(totalTickets, vendorReleaseRate, customerRetrievalRate, maxTicketCapacity, noOfVendors, noOfCustomers, noOfVIPCustomers, simSpeed))
                     throw new IOException("Simulation is already running.");
             } else throw new IOException("Event not found with id " + eventID);
         } finally {

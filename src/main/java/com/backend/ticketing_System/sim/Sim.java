@@ -2,20 +2,19 @@ package com.backend.ticketing_System.sim;
 
 import com.backend.ticketing_System.handler.TextWebSocketHandler;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class Sim {
-    private static final List<Thread> vendorThreads = Collections.synchronizedList(new ArrayList<>());
-    private static final List<Thread> customerThreads = Collections.synchronizedList(new ArrayList<>());
+    private static ThreadPoolExecutor threadPoolExecutor;
     private static final ReentrantLock lock = new ReentrantLock(true);
     public static boolean activeVendors;
     private static boolean isRunning = false;
 
 
-    public static boolean startSimulation(int totalTickets, int vendorReleaseRate, int customerRetrievalRate, int maxTicketCapacity, int noOfVendors, int noOfCustomers, int simSpeed) {
+    public static boolean startSimulation(int totalTickets, int vendorReleaseRate, int customerRetrievalRate, int maxTicketCapacity, int noOfVendors, int noOfCustomers, int noOfVIPCustomers, int simSpeed) {
         lock.lock();
         try {
             if (isRunning) {
@@ -37,16 +36,21 @@ public class Sim {
             CustomerSim.setFinalTransaction(false);
             CustomerSim.setMessagePrinted(false);
 
-            for (int i = 0; i < noOfVendors; i++) {
-                Thread vendorThread = new Thread(new VendorSim(vendorReleaseRate, eventSim));
-                vendorThreads.add(vendorThread);
-                vendorThread.start();
-            }
+            threadPoolExecutor = new ThreadPoolExecutor(
+                    noOfVendors + noOfVIPCustomers + noOfCustomers,
+                    noOfVendors + noOfVIPCustomers + noOfCustomers,
+                    0L, TimeUnit.MILLISECONDS,
+                    new PriorityBlockingQueue<>()
+            );
 
+            for (int i = 0; i < noOfVendors; i++) {
+                threadPoolExecutor.submit(new VendorSim(vendorReleaseRate, eventSim));
+            }
             for (int i = 0; i < noOfCustomers; i++) {
-                Thread customerThread = new Thread(new CustomerSim(customerRetrievalRate, eventSim));
-                customerThreads.add(customerThread);
-                customerThread.start();
+                threadPoolExecutor.submit(new CustomerTaskSim(new CustomerSim(customerRetrievalRate, eventSim), false));
+            }
+            for (int i = 0; i < noOfVIPCustomers; i++) {
+                threadPoolExecutor.submit(new CustomerTaskSim(new VIPCustomerSim(customerRetrievalRate, eventSim), true));
             }
             System.out.println("Simulation started.");
             TextWebSocketHandler.broadcast("--- Simulation started.");
@@ -64,10 +68,7 @@ public class Sim {
                 return false;
             }
 
-            vendorThreads.forEach(Thread::interrupt);
-            customerThreads.forEach(Thread::interrupt);
-            vendorThreads.clear();
-            customerThreads.clear();
+            threadPoolExecutor.shutdownNow();
 
             isRunning = false;
             if (message) {

@@ -93,11 +93,24 @@ const SimData: React.FC<SimDataProps> = ({ eventId }) => {
 
     const buffer = (allAddedTickets / event.totalTickets) * 100;
 
+    const getChipProps = () => {
+        if (allSoldTickets.length === 0) {
+            return { label: "Not Started", color: "warning" };
+        } else if (allSoldTickets.reduce((acc, ticket) => acc + ticket, 0) === event.totalTickets) {
+            return { label: "Finished", color: "primary" };
+        } else {
+            return { label: "Running", color: "success" };
+        }
+    };
+
+    const chipProps = getChipProps();
+
     return (
         <div>
             <h2>Simulation Data</h2>
             <div>
-                <Chip label="Running" color="success" variant="outlined" />
+                // @ts-ignore ignore this error
+                <Chip label={chipProps.label} color={chipProps.color} variant="outlined" />
             </div>
             <h3>Static Data</h3>
             <div>Event Name - {event.name}</div>
