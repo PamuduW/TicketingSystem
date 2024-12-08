@@ -46,6 +46,7 @@ public class VendorSim implements Runnable {
                         if (!messagePrinted) {
                             String str = "--- All vendors have reached the ticket limit and stopped interacting.";
                             Sim.log += str + "\n";
+                            System.out.println(str);
                             TextWebSocketHandler.broadcast(str);
                             Sim.activeVendors = false;
                             messagePrinted = true;

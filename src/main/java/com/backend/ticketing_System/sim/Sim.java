@@ -66,6 +66,7 @@ public class Sim {
             }
             String str = "--- Simulation started.";
             TextWebSocketHandler.broadcast(str);
+            System.out.println(str);
             log += str + "\n";
         } finally {
             lock.unlock();
@@ -86,6 +87,7 @@ public class Sim {
             isRunning = false;
             if (message) {
                 String str = "--- Simulation stopped by the user.";
+                System.out.println(str);
                 TextWebSocketHandler.broadcast(str);
                 log += str + "\n";
                 EventService eventService = new EventService(eventRepo, vendorRepo);

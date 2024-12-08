@@ -49,6 +49,7 @@ public class CustomerSim implements Runnable{
                     if (finalTransaction && !messagePrinted) {
                         String str = "--- Customer \" + customerName + \" --- Retrieved the last available tickets. \\n\\s\\s\\sEnding simulation.";
                         Sim.log += str + "\n";
+                        System.out.println(str);
                         TextWebSocketHandler.broadcast(str);
                         Sim.stopSimulation(false);
                         messagePrinted = true;
