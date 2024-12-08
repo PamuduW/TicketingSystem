@@ -44,7 +44,9 @@ public class VendorSim implements Runnable {
                     Thread.sleep(simulationSpeed);
                     if (totalTicketsAdded == totalTicketLimit) {
                         if (!messagePrinted) {
-                            TextWebSocketHandler.broadcast("--- All vendors have reached the ticket limit and stopped interacting.");
+                            String str = "--- All vendors have reached the ticket limit and stopped interacting.";
+                            Sim.log += str + "\n";
+                            TextWebSocketHandler.broadcast(str);
                             Sim.activeVendors = false;
                             messagePrinted = true;
                         }

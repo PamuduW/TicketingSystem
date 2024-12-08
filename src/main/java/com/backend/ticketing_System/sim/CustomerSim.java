@@ -47,7 +47,9 @@ public class CustomerSim implements Runnable{
                     eventSim.retrieveTickets(customerName, ticketsToRetrieve, finalTransaction);
 
                     if (finalTransaction && !messagePrinted) {
-                        TextWebSocketHandler.broadcast("--- Customer " + customerName + " --- Retrieved the last available tickets. \n\s\s\sEnding simulation.");
+                        String str = "--- Customer \" + customerName + \" --- Retrieved the last available tickets. \\n\\s\\s\\sEnding simulation.";
+                        Sim.log += str + "\n";
+                        TextWebSocketHandler.broadcast(str);
                         Sim.stopSimulation(false);
                         messagePrinted = true;
                         break;

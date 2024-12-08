@@ -31,17 +31,23 @@ public class EventSim {
     public void addTickets(String vendorName, int ticketsToAdd) {
         lock.lock();
         try {
-            TextWebSocketHandler.broadcast(String.format("--- Vendor %s --- trying to add %d tickets", vendorName, ticketsToAdd));
+            String str = String.format("--- Vendor %s --- trying to add %d tickets", vendorName, ticketsToAdd);
+            Sim.log += str + "\n";
+            TextWebSocketHandler.broadcast(str);
             while (currentTickets + ticketsToAdd > maxCapacity) {
                 try {
-                    TextWebSocketHandler.broadcast("--- Vendor " + vendorName + " ---  Waiting, ticket pool at max capacity.");
+                    String str1 = "--- Vendor " + vendorName + " ---  Waiting, ticket pool at max capacity.";
+                    Sim.log += str1 + "\n";
+                    TextWebSocketHandler.broadcast(str1);
                     poolFull.await();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
             }
             currentTickets += ticketsToAdd;
-            TextWebSocketHandler.broadcast(String.format("--- Vendor %s --- Added %d tickets. Current tickets : %d. All sold Tickets : %d", vendorName, ticketsToAdd, currentTickets, allSoldTickets));
+            String str2 = String.format("--- Vendor %s --- Added %d tickets. Current tickets : %d. All sold Tickets : %d", vendorName, ticketsToAdd, currentTickets, allSoldTickets);
+            TextWebSocketHandler.broadcast(str2);
+            Sim.log += str2 + "\n";
             IntegerWebSocketHandler.broadcast(currentTickets, allSoldTickets);
             poolEmpty.signalAll();
         } finally {
@@ -53,18 +59,24 @@ public class EventSim {
         lock.lock();
         try {
             if (allSoldTickets == VendorSim.getTotalTicketLimit()) return;
-            TextWebSocketHandler.broadcast(String.format("--- Customer %s --- trying to retrieve %d tickets", customerName, ticketsToRetrieve));
+            String str = String.format("--- Customer %s --- trying to retrieve %d tickets", customerName, ticketsToRetrieve);
+            TextWebSocketHandler.broadcast(str);
+            Sim.log += str + "\n";
             if (currentTickets < ticketsToRetrieve) {
                 if (finalTransaction) {
                     allSoldTickets += currentTickets;
-                    TextWebSocketHandler.broadcast(String.format("--- Customer %s --- Retrieved remaining %d tickets. Current tickets : 0. All sold Tickets : %d. (final transaction)", customerName, currentTickets, allSoldTickets));
+                    String str1 = String.format("--- Customer %s --- Retrieved remaining %d tickets. Current tickets : 0. All sold Tickets : %d. (final transaction)", customerName, currentTickets, allSoldTickets);
+                    TextWebSocketHandler.broadcast(str1);
+                    Sim.log += str1 + "\n";
                     currentTickets = 0;
                     IntegerWebSocketHandler.broadcast(currentTickets, allSoldTickets);
                     return;
                 } else {
                     while (currentTickets < ticketsToRetrieve) {
                         try {
-                            TextWebSocketHandler.broadcast("--- Customer " + customerName + " --- Waiting, Not enough tickets.");
+                            String str2 = "--- Customer " + customerName + " --- Waiting, Not enough tickets.";
+                            TextWebSocketHandler.broadcast(str2);
+                            Sim.log += str2 + "\n";
                             poolEmpty.await();
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
@@ -74,7 +86,9 @@ public class EventSim {
             }
             currentTickets -= ticketsToRetrieve;
             allSoldTickets += ticketsToRetrieve;
-            TextWebSocketHandler.broadcast(String.format("--- Customer %s --- Retrieved %d tickets. Current tickets : %d. All sold Tickets : %d", customerName, ticketsToRetrieve, currentTickets, allSoldTickets));
+            String str3 = String.format("--- Customer %s --- Retrieved %d tickets. Current tickets : %d. All sold Tickets : %d", customerName, ticketsToRetrieve, currentTickets, allSoldTickets);
+            TextWebSocketHandler.broadcast(str3);
+            Sim.log += str3 + "\n";
             IntegerWebSocketHandler.broadcast(currentTickets, allSoldTickets);
             poolFull.signalAll();
         } finally {

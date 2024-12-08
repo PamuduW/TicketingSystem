@@ -12,6 +12,7 @@ public class Sim {
     private static final ReentrantLock lock = new ReentrantLock(true);
     public static boolean activeVendors;
     private static boolean isRunning = false;
+    public static String log;
 
 
     public static boolean startSimulation(int totalTickets, int vendorReleaseRate, int customerRetrievalRate, int maxTicketCapacity, int noOfVendors, int noOfCustomers, int noOfVIPCustomers, int simSpeed) {
@@ -52,8 +53,9 @@ public class Sim {
             for (int i = 0; i < noOfVIPCustomers; i++) {
                 threadPoolExecutor.submit(new CustomerTaskSim(new VIPCustomerSim(customerRetrievalRate, eventSim), true));
             }
-            System.out.println("Simulation started.");
-            TextWebSocketHandler.broadcast("--- Simulation started.");
+            String str = "--- Simulation started.";
+            TextWebSocketHandler.broadcast(str);
+            log += str + "\n";
         } finally {
             lock.unlock();
         }
@@ -72,8 +74,9 @@ public class Sim {
 
             isRunning = false;
             if (message) {
-                System.out.println("Simulation stopped by the user.");
-                TextWebSocketHandler.broadcast("--- Simulation stopped by the user.");
+                String str = "--- Simulation stopped by the user.";
+                TextWebSocketHandler.broadcast(str);
+                log += str + "\n";
             }
         } finally {
             lock.unlock();

@@ -28,4 +28,5 @@ public class Event {
     private int totalTicketsAdded = 0;
     private List<Ticket> tickets = new ArrayList<>();
     private Set<String> vendors = new HashSet<>();
+    private List<String> Logs = new ArrayList<>();
 }
