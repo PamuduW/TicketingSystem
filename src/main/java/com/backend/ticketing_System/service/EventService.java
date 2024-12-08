@@ -186,9 +186,23 @@ public class EventService {
             if (eventRepo.findById(eventID).isPresent()) {
                 int totalTickets = eventRepo.findById(eventID).get().getTotalTickets();
                 int maxTicketCapacity = eventRepo.findById(eventID).get().getMaxCapacity();
-                if (!Sim.startSimulation(totalTickets, vendorReleaseRate, customerRetrievalRate, maxTicketCapacity, noOfVendors, noOfCustomers, noOfVIPCustomers, simSpeed))
+                if (!Sim.startSimulation(totalTickets, vendorReleaseRate, customerRetrievalRate, maxTicketCapacity, noOfVendors, noOfCustomers, noOfVIPCustomers, simSpeed, eventID, eventRepo, vendorRepo))
                     throw new IOException("Simulation is already running.");
             } else throw new IOException("Event not found with id " + eventID);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public void saveLog(String eventId, String log, List<Integer> logInt) {
+        lock.unlock();
+        try {
+            if (eventRepo.findById(eventId).isPresent()) {
+                Event event = eventRepo.findById(eventId).get();
+                event.getLogs().add(log);
+                event.getIntLogs().add(logInt);
+                eventRepo.save(event);
+            } else throw new RuntimeException("Event not found with id " + eventId);
         } finally {
             lock.unlock();
         }
@@ -197,8 +211,10 @@ public class EventService {
     public void stopSimulation(String id) throws IOException {
         lock.lock();
         try {
+            if (eventRepo.findById(id).isPresent()) {
             if (!Sim.stopSimulation(true))
                 throw new IOException("Simulation is not running.");
+            } else throw new RuntimeException("Event not found with id " + id);
         } finally {
             lock.unlock();
         }
@@ -208,14 +224,5 @@ public class EventService {
 
 
 /// //////////////////////////////////////////// make only one instance of vendor acc log in can happen at any time ///////////////////////////////////////////////////////
-/// //////////////////////////////////////////// make stop sim advanced check if the event exists///////////////////////////////////////////////////////////////////////
-/// ///////////////////////////////////////// try to extend customers into VIPs and give them early access ( like till certain num of tickets are sold or something like that. after that all are equal. try to implement this for both sim and real world )   /////////////////////////////
 /// /////////////////////////////////////////try to add image functions  ////////////////////////////////////////////////////////////////////////////
 /// ////////////////////////////////////////// try to make sims web socket independent to the session ///////////////////////////////////////////////
-/// //////////////////////////////////////// save a logs in the backend ////////////////////////////////////////
-
-/// /////////////////////////////////////////// give real time variables to the front end to display //////////////////////////////////
-/// //////////////////////////////////////////////////////////// add editing event details make owner id remains unchanged //////////////////////////////////////////////////////////////
-/// //////
-/// ////////////////////////////////// add stop sim button //////////////////////////////////////////////////
-/// /////////////////////////////////////////// add time to that update stings in console//////////////////////////////////////

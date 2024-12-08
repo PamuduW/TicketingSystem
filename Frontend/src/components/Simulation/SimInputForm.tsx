@@ -59,8 +59,11 @@ const SimInputForm: React.FC<SimInputFormProps> = ({ eventId }) => {
             console.log("Response:", response.data);
         } catch (error: unknown) {
             if (axios.isAxiosError(error) && error.response) {
-                if (error.response && error.response.status === 409) {
+                if (error.response && error.response.status === 409 && error.response.data === "Simulation is not running.") {
                     alert("The simulation is not running");
+                }
+                if (error.response && error.response.status === 409) {
+                    alert("Event not found");
                 } else {
                     console.error("Error:", error);
                 }

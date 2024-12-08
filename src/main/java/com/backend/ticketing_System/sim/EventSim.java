@@ -3,6 +3,9 @@ package com.backend.ticketing_System.sim;
 import com.backend.ticketing_System.handler.IntegerWebSocketHandler;
 import com.backend.ticketing_System.handler.TextWebSocketHandler;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -48,6 +51,8 @@ public class EventSim {
             String str2 = String.format("--- Vendor %s --- Added %d tickets. Current tickets : %d. All sold Tickets : %d", vendorName, ticketsToAdd, currentTickets, allSoldTickets);
             TextWebSocketHandler.broadcast(str2);
             Sim.log += str2 + "\n";
+            Sim.logInt.add(currentTickets);
+            Sim.logInt.add(allSoldTickets);
             IntegerWebSocketHandler.broadcast(currentTickets, allSoldTickets);
             poolEmpty.signalAll();
         } finally {
@@ -69,6 +74,8 @@ public class EventSim {
                     TextWebSocketHandler.broadcast(str1);
                     Sim.log += str1 + "\n";
                     currentTickets = 0;
+                    Sim.logInt.add(currentTickets);
+                    Sim.logInt.add(allSoldTickets);
                     IntegerWebSocketHandler.broadcast(currentTickets, allSoldTickets);
                     return;
                 } else {
@@ -89,6 +96,8 @@ public class EventSim {
             String str3 = String.format("--- Customer %s --- Retrieved %d tickets. Current tickets : %d. All sold Tickets : %d", customerName, ticketsToRetrieve, currentTickets, allSoldTickets);
             TextWebSocketHandler.broadcast(str3);
             Sim.log += str3 + "\n";
+            Sim.logInt.add(currentTickets);
+            Sim.logInt.add(allSoldTickets);
             IntegerWebSocketHandler.broadcast(currentTickets, allSoldTickets);
             poolFull.signalAll();
         } finally {

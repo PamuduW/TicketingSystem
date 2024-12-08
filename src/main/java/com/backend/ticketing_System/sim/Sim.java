@@ -1,7 +1,11 @@
 package com.backend.ticketing_System.sim;
 
 import com.backend.ticketing_System.handler.TextWebSocketHandler;
+import com.backend.ticketing_System.repository.EventRepository;
+import com.backend.ticketing_System.repository.VendorRepository;
+import com.backend.ticketing_System.service.EventService;
 
+import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -12,12 +16,19 @@ public class Sim {
     private static final ReentrantLock lock = new ReentrantLock(true);
     public static boolean activeVendors;
     private static boolean isRunning = false;
+    private static String eventId;
+    private static VendorRepository vendorRepo;
+    private static EventRepository eventRepo;
     public static String log;
+    public static List<Integer> logInt;
 
 
-    public static boolean startSimulation(int totalTickets, int vendorReleaseRate, int customerRetrievalRate, int maxTicketCapacity, int noOfVendors, int noOfCustomers, int noOfVIPCustomers, int simSpeed) {
+    public static boolean startSimulation(int totalTickets, int vendorReleaseRate, int customerRetrievalRate, int maxTicketCapacity, int noOfVendors, int noOfCustomers, int noOfVIPCustomers, int simSpeed, String eventId, EventRepository eventRepo, VendorRepository vendorRepo) {
         lock.lock();
         try {
+            Sim.eventId = eventId;
+            Sim.eventRepo = eventRepo;
+            Sim.vendorRepo = vendorRepo;
             if (isRunning) {
                 System.out.println("Simulation is already running.");
                 return false;
@@ -77,6 +88,8 @@ public class Sim {
                 String str = "--- Simulation stopped by the user.";
                 TextWebSocketHandler.broadcast(str);
                 log += str + "\n";
+                EventService eventService = new EventService(eventRepo, vendorRepo);
+                eventService.saveLog(eventId, log, logInt);
             }
         } finally {
             lock.unlock();
