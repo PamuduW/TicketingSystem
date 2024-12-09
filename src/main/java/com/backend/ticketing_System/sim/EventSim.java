@@ -1,11 +1,6 @@
 package com.backend.ticketing_System.sim;
 
-import com.backend.ticketing_System.handler.IntegerWebSocketHandler;
-import com.backend.ticketing_System.handler.TextWebSocketHandler;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -16,6 +11,7 @@ public class EventSim {
     private final ReentrantLock lock = new ReentrantLock(true);
     private final Condition poolFull = lock.newCondition();
     private final Condition poolEmpty = lock.newCondition();
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 
     public EventSim(int maxCapacity) {
@@ -34,29 +30,17 @@ public class EventSim {
     public void addTickets(String vendorName, int ticketsToAdd) {
         lock.lock();
         try {
-            String str = String.format("--- Vendor %s --- trying to add %d tickets", vendorName, ticketsToAdd);
-            Sim.log += str + "\n";
-            System.out.println(str);
-            TextWebSocketHandler.broadcast(str);
+            SimLog.logging(String.format("--- Vendor %s >>> trying to add %d tickets", vendorName, ticketsToAdd));
             while (currentTickets + ticketsToAdd > maxCapacity) {
                 try {
-                    String str1 = "--- Vendor " + vendorName + " ---  Waiting, ticket pool at max capacity.";
-                    Sim.log += str1 + "\n";
-                    System.out.println(str1);
-                    TextWebSocketHandler.broadcast(str1);
+                    SimLog.logging("--- Vendor " + vendorName + " >>>  Waiting, ticket pool at max capacity.");
                     poolFull.await();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
             }
             currentTickets += ticketsToAdd;
-            String str2 = String.format("--- Vendor %s --- Added %d tickets. Current tickets : %d. All sold Tickets : %d", vendorName, ticketsToAdd, currentTickets, allSoldTickets);
-            TextWebSocketHandler.broadcast(str2);
-            System.out.println(str2);
-            Sim.log += str2 + "\n";
-            Sim.logInt.add(currentTickets);
-            Sim.logInt.add(allSoldTickets);
-            IntegerWebSocketHandler.broadcast(currentTickets, allSoldTickets);
+            SimLog.loggingWithNums(String.format("--- Vendor %s >>> Added %d tickets. Current tickets : %d. All sold Tickets : %d", vendorName, ticketsToAdd, currentTickets, allSoldTickets), currentTickets, allSoldTickets, false);
             poolEmpty.signalAll();
         } finally {
             lock.unlock();
@@ -67,29 +51,16 @@ public class EventSim {
         lock.lock();
         try {
             if (allSoldTickets == VendorSim.getTotalTicketLimit()) return;
-            String str = String.format("--- Customer %s --- trying to retrieve %d tickets", customerName, ticketsToRetrieve);
-            TextWebSocketHandler.broadcast(str);
-            System.out.println(str);
-            Sim.log += str + "\n";
+            SimLog.logging(String.format("--- Customer %s >>> trying to retrieve %d tickets", customerName, ticketsToRetrieve));
             if (currentTickets < ticketsToRetrieve) {
                 if (finalTransaction) {
                     allSoldTickets += currentTickets;
-                    String str1 = String.format("--- Customer %s --- Retrieved remaining %d tickets. Current tickets : 0. All sold Tickets : %d. (final transaction)", customerName, currentTickets, allSoldTickets);
-                    TextWebSocketHandler.broadcast(str1);
-                    System.out.println(str1);
-                    Sim.log += str1 + "\n";
-                    currentTickets = 0;
-                    Sim.logInt.add(currentTickets);
-                    Sim.logInt.add(allSoldTickets);
-                    IntegerWebSocketHandler.broadcast(currentTickets, allSoldTickets);
+                    SimLog.loggingWithNums(String.format("--- Customer %s >>> Retrieved remaining %d tickets. Current tickets : 0. All sold Tickets : %d. (final transaction)", customerName, currentTickets, allSoldTickets), currentTickets, allSoldTickets, true);
                     return;
                 } else {
                     while (currentTickets < ticketsToRetrieve) {
                         try {
-                            String str2 = "--- Customer " + customerName + " --- Waiting, Not enough tickets.";
-                            TextWebSocketHandler.broadcast(str2);
-                            System.out.println(str2);
-                            Sim.log += str2 + "\n";
+                            SimLog.logging("--- Customer " + customerName + " >>> Waiting, Not enough tickets.");
                             poolEmpty.await();
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
@@ -99,13 +70,7 @@ public class EventSim {
             }
             currentTickets -= ticketsToRetrieve;
             allSoldTickets += ticketsToRetrieve;
-            String str3 = String.format("--- Customer %s --- Retrieved %d tickets. Current tickets : %d. All sold Tickets : %d", customerName, ticketsToRetrieve, currentTickets, allSoldTickets);
-            TextWebSocketHandler.broadcast(str3);
-            System.out.println(str3);
-            Sim.log += str3 + "\n";
-            Sim.logInt.add(currentTickets);
-            Sim.logInt.add(allSoldTickets);
-            IntegerWebSocketHandler.broadcast(currentTickets, allSoldTickets);
+            SimLog.loggingWithNums(String.format("--- Customer %s >>> Retrieved %d tickets. Current tickets : %d. All sold Tickets : %d", customerName, ticketsToRetrieve, currentTickets, allSoldTickets), currentTickets, allSoldTickets, false);
             poolFull.signalAll();
         } finally {
             lock.unlock();

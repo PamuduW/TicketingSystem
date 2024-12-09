@@ -8,14 +8,11 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class TextWebSocketHandler extends org.springframework.web.socket.handler.TextWebSocketHandler {
     private static final Logger logger = LoggerFactory.getLogger(TextWebSocketHandler.class);
     private static final CopyOnWriteArrayList<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override
     public void afterConnectionEstablished(@NonNull WebSocketSession session) {
@@ -47,11 +44,9 @@ public class TextWebSocketHandler extends org.springframework.web.socket.handler
     }
 
     public static void broadcast(String message) {
-        String timestamp = LocalDateTime.now().format(formatter);
-        String messageWithTimestamp = "---[" + timestamp + "]" + message;
         for (WebSocketSession session : sessions) {
             try {
-                session.sendMessage(new TextMessage(messageWithTimestamp));
+                session.sendMessage(new TextMessage(message));
             } catch (IOException e) {
                 logger.error("Error broadcasting message", e);
             }

@@ -1,9 +1,9 @@
 package com.backend.ticketing_System.sim;
 
-import com.backend.ticketing_System.handler.TextWebSocketHandler;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Random;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -24,6 +24,7 @@ public class VendorSim implements Runnable {
     @Setter
     private static boolean messagePrinted = false;
     private static final ReentrantLock lock = new ReentrantLock(true);
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 
     public VendorSim(int vendorReleaseRate, EventSim eventSim) {
@@ -44,10 +45,7 @@ public class VendorSim implements Runnable {
                     Thread.sleep(simulationSpeed);
                     if (totalTicketsAdded == totalTicketLimit) {
                         if (!messagePrinted) {
-                            String str = "--- All vendors have reached the ticket limit and stopped interacting.";
-                            Sim.log += str + "\n";
-                            System.out.println(str);
-                            TextWebSocketHandler.broadcast(str);
+                            SimLog.logging("--- All vendors have reached the ticket limit and stopped interacting.");
                             Sim.activeVendors = false;
                             messagePrinted = true;
                         }

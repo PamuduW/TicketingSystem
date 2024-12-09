@@ -1,8 +1,8 @@
 package com.backend.ticketing_System.sim;
 
-import com.backend.ticketing_System.handler.TextWebSocketHandler;
 import lombok.Setter;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Random;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -20,6 +20,7 @@ public class CustomerSim implements Runnable{
     @Setter
     private static boolean finalTransaction = false;
     private static final ReentrantLock lock = new ReentrantLock(true);
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 
     public CustomerSim(int maxTicketsToRetrieve, EventSim eventSim) {
@@ -47,10 +48,7 @@ public class CustomerSim implements Runnable{
                     eventSim.retrieveTickets(customerName, ticketsToRetrieve, finalTransaction);
 
                     if (finalTransaction && !messagePrinted) {
-                        String str = "--- Customer \" + customerName + \" --- Retrieved the last available tickets. \\n\\s\\s\\sEnding simulation.";
-                        Sim.log += str + "\n";
-                        System.out.println(str);
-                        TextWebSocketHandler.broadcast(str);
+                        SimLog.logging("--- Customer " + customerName + " >>> Retrieved the last available tickets. \n\s\s\sEnding simulation.");
                         Sim.stopSimulation(false);
                         messagePrinted = true;
                         break;
