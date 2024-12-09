@@ -186,7 +186,7 @@ public class EventService {
             if (eventRepo.findById(eventID).isPresent()) {
                 int totalTickets = eventRepo.findById(eventID).get().getTotalTickets();
                 int maxTicketCapacity = eventRepo.findById(eventID).get().getMaxCapacity();
-                if (!Sim.startSimulation(totalTickets, vendorReleaseRate, customerRetrievalRate, maxTicketCapacity, noOfVendors, noOfCustomers, noOfVIPCustomers, simSpeed))
+                if (!Sim.startSimulation(totalTickets, vendorReleaseRate, customerRetrievalRate, maxTicketCapacity, noOfVendors, noOfCustomers, noOfVIPCustomers, simSpeed, eventID))
                     throw new IOException("Simulation is already running.");
             } else throw new IOException("Event not found with id " + eventID);
         } finally {
@@ -198,8 +198,9 @@ public class EventService {
         lock.lock();
         try {
             if (eventRepo.findById(id).isPresent()) {
-            if (!Sim.stopSimulation(true))
-                throw new IOException("Simulation is not running.");
+                Sim simInstance = new Sim();
+                if (!simInstance.stopSimulation(true, id))
+                    throw new IOException("Simulation is not running.");
             } else throw new RuntimeException("Event not found with id " + id);
         } finally {
             lock.unlock();

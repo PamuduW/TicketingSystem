@@ -1,18 +1,29 @@
 package com.backend.ticketing_System.sim;
 
+import com.backend.ticketing_System.model.Event;
+import com.backend.ticketing_System.repository.EventRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
+@Component
 public class Sim {
     private static ThreadPoolExecutor threadPoolExecutor;
     private static final ReentrantLock lock = new ReentrantLock(true);
     public static boolean activeVendors;
     private static boolean isRunning = false;
+    public static String eventId;
 
-    public static boolean startSimulation(int totalTickets, int vendorReleaseRate, int customerRetrievalRate, int maxTicketCapacity, int noOfVendors, int noOfCustomers, int noOfVIPCustomers, int simSpeed) {
+    @Autowired
+    private EventRepository eventRepository;
+
+    public static boolean startSimulation(int totalTickets, int vendorReleaseRate, int customerRetrievalRate, int maxTicketCapacity, int noOfVendors, int noOfCustomers, int noOfVIPCustomers, int simSpeed, String eventId) {
         lock.lock();
+        Sim.eventId = eventId;
         try {
             if (isRunning) {
                 return false;
@@ -55,7 +66,7 @@ public class Sim {
         return true;
     }
 
-    public static boolean stopSimulation(boolean message) {
+    public boolean stopSimulation(boolean message, String eventId) {
         lock.lock();
         try {
             if (!isRunning) {
@@ -68,6 +79,19 @@ public class Sim {
             if (message) {
                 SimLog.logging("--- Simulation stopped by the user.");
             }
+
+            // Retrieve the event by ID
+            if (eventRepository.findById(eventId).isPresent()){
+                System.out.println("//////////////////////////////////////////////////////////");
+
+                Event event = eventRepository.findById(eventId).get();
+
+                event.getLogs().add(SimLog.log);
+                event.getIntLogs().add(SimLog.logInt);
+
+                eventRepository.save(event);
+            } else
+                System.out.println("------------------------------------------------------");
         } finally {
             lock.unlock();
         }

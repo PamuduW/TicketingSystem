@@ -1,4 +1,5 @@
-import java.io.BufferedReader;
+import com.google.gson.Gson;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -30,13 +31,13 @@ public class Main {
         while (true) {
             if (fileExists) {
                 System.out.println("Config file found");
-                try (BufferedReader reader = new BufferedReader(new FileReader(configFile))) {
-                    // Read and parse the config file
-                    reader.readLine();
-                    totalTickets = Integer.parseInt(reader.readLine().split(":")[1].trim().split(",")[0]);
-                    vendorReleaseRate = Integer.parseInt(reader.readLine().split(":")[1].trim().split(",")[0]);
-                    customerRetrievalRate = Integer.parseInt(reader.readLine().split(":")[1].trim().split(",")[0]);
-                    maxTicketCapacity = Integer.parseInt(reader.readLine().split(":")[1].trim().split(",")[0]);
+                try (FileReader reader = new FileReader(configFile)) {
+                    Gson gson = new Gson();
+                    Config config = gson.fromJson(reader, Config.class);
+                    totalTickets = config.getTotalTickets();
+                    vendorReleaseRate = config.getVendorReleaseRate();
+                    customerRetrievalRate = config.getCustomerRetrievalRate();
+                    maxTicketCapacity = config.getMaxTicketCapacity();
                     break;
                 } catch (Exception e) {
                     System.out.println("An error has occurred with the file reading");
@@ -94,12 +95,11 @@ public class Main {
             maxTicketCapacity = getInput("Enter Maximum Ticket Capacity : ");
             try {
                 new File("Logs").mkdir();
-                FileWriter textFileWriter = new FileWriter("Logs/config.json");
-                textFileWriter.write("{\n\"totalTickets\" : " + totalTickets
-                        + ",\n\"vendorReleaseRate\" : " + vendorReleaseRate
-                        + ",\n\"customerRetrievalRate\" : " + customerRetrievalRate
-                        + ",\n\"maxTicketCapacity\" : " + maxTicketCapacity + "\n}");
-                textFileWriter.close();
+                Config config = new Config(totalTickets, vendorReleaseRate, customerRetrievalRate, maxTicketCapacity);
+                Gson gson = new Gson();
+                try (FileWriter writer = new FileWriter("Logs/config.json")) {
+                    gson.toJson(config, writer);
+                }
                 System.out.println("Successfully wrote the config information to the file");
                 break;
             } catch (Exception e) {
@@ -168,6 +168,7 @@ public class Main {
         for (int i = 0; i < noOfVIPCustomers; i++) {
             threadPoolExecutor.submit(new CustomerTask(new VIPCustomer(customerRetrievalRate, ticketPool, console, customerSpeed), true));
         }
+        console.appendOutput("Simulation started.");
         System.out.println("Simulation started.");
     }
 
