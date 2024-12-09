@@ -186,23 +186,9 @@ public class EventService {
             if (eventRepo.findById(eventID).isPresent()) {
                 int totalTickets = eventRepo.findById(eventID).get().getTotalTickets();
                 int maxTicketCapacity = eventRepo.findById(eventID).get().getMaxCapacity();
-                if (!Sim.startSimulation(totalTickets, vendorReleaseRate, customerRetrievalRate, maxTicketCapacity, noOfVendors, noOfCustomers, noOfVIPCustomers, simSpeed, eventID, eventRepo, vendorRepo))
+                if (!Sim.startSimulation(totalTickets, vendorReleaseRate, customerRetrievalRate, maxTicketCapacity, noOfVendors, noOfCustomers, noOfVIPCustomers, simSpeed))
                     throw new IOException("Simulation is already running.");
             } else throw new IOException("Event not found with id " + eventID);
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    public void saveLog(String eventId, String log, List<Integer> logInt) {
-        lock.unlock();
-        try {
-            if (eventRepo.findById(eventId).isPresent()) {
-                Event event = eventRepo.findById(eventId).get();
-                event.getLogs().add(log);
-                event.getIntLogs().add(logInt);
-                eventRepo.save(event);
-            } else throw new RuntimeException("Event not found with id " + eventId);
         } finally {
             lock.unlock();
         }
@@ -223,6 +209,8 @@ public class EventService {
 }
 
 
+/// //////////////////////////////////////////// add get all tickets for customer id  //////////////////////////////////////////////////////////////
+/// //////////////////////////////////////////// try to make vendor and customer one class change them up wit a boolean ///////////////////////////
 /// //////////////////////////////////////////// make only one instance of vendor acc log in can happen at any time ///////////////////////////////////////////////////////
 /// /////////////////////////////////////////try to add image functions  ////////////////////////////////////////////////////////////////////////////
 /// ////////////////////////////////////////// try to make sims web socket independent to the session ///////////////////////////////////////////////

@@ -30,4 +30,10 @@ public class SimLog {
         IntegerWebSocketHandler.broadcast(currentTickets, allSoldTickets);
         logInt.add(nums);
     }
+
+    public void SaveLogs(String eventId){
+        System.out.println(eventId);
+        System.out.println(log);
+        System.out.println(logInt);
+    }
 }
