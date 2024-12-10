@@ -6,6 +6,7 @@ import com.backend.ticketing_System.model.Vendor;
 import com.backend.ticketing_System.repository.EventRepository;
 import com.backend.ticketing_System.repository.VendorRepository;
 import com.backend.ticketing_System.sim.Sim;
+import com.backend.ticketing_System.sim.SimLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -206,11 +207,24 @@ public class EventService {
         }
     }
 
+    public void saveLogs(String id) throws IOException {
+        lock.lock();
+        try {
+            if (eventRepo.findById(id).isPresent()) {
+               Event event = eventRepo.findById(id).get();
+               event.getLogs().add(SimLog.log);
+               event.getIntLogs().add(SimLog.logInt);
+               eventRepo.save(event);
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
 }
 
 
 /// //////////////////////////////////////////// add get all tickets for customer id  //////////////////////////////////////////////////////////////
-/// //////////////////////////////////////////// try to make vendor and customer one class change them up wit a boolean ///////////////////////////
 /// //////////////////////////////////////////// make only one instance of vendor acc log in can happen at any time ///////////////////////////////////////////////////////
 /// /////////////////////////////////////////try to add image functions  ////////////////////////////////////////////////////////////////////////////
 /// ////////////////////////////////////////// try to make sims web socket independent to the session ///////////////////////////////////////////////

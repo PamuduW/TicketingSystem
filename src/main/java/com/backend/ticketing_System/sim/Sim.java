@@ -1,5 +1,6 @@
 package com.backend.ticketing_System.sim;
 
+import java.util.ArrayList;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -33,6 +34,8 @@ public class Sim {
             CustomerSim.setCustomerCount(0);
             CustomerSim.setFinalTransaction(false);
             CustomerSim.setMessagePrinted(false);
+            SimLog.log = "";
+            SimLog.logInt = new ArrayList<>();
 
             threadPoolExecutor = new ThreadPoolExecutor(
                     noOfVendors + noOfVIPCustomers + noOfCustomers,
@@ -70,7 +73,6 @@ public class Sim {
             if (message) {
                 SimLog.logging("--- Simulation stopped by the user.");
             }
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {

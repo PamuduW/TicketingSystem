@@ -128,4 +128,14 @@ public class EventController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
     }
+
+    @PostMapping("/event/{id}/saveLogs")
+    public ResponseEntity<?> saveLogs(@PathVariable String id) {
+        try {
+            eventService.saveLogs(id);
+            return ResponseEntity.ok().build();
+        } catch (IOException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        }
+    }
 }

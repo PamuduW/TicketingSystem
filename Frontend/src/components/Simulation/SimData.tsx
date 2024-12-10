@@ -78,6 +78,27 @@ const SimData: React.FC<SimDataProps> = ({ eventId }) => {
         }
     }, [userContext]);
 
+    useEffect(() => {
+        if (
+            allSoldTickets.reduce((acc, ticket) => acc + ticket, 0) ===
+            event?.totalTickets
+        ) {
+            const saveLogs = async () => {
+                try {
+                    await API.post(`/event/${eventId}/saveLogs`, {
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    });
+                    console.log("Logs saved successfully");
+                } catch (error) {
+                    console.error("Error saving logs:", error);
+                }
+            };
+            saveLogs();
+        }
+    }, [allSoldTickets, eventId, event]);
+
     if (!event) {
         return <p>Loading...</p>;
     }
