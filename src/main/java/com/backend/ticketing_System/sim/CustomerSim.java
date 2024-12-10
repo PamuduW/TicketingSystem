@@ -20,7 +20,6 @@ public class CustomerSim implements Runnable {
     private static boolean finalTransaction = false;
     private static final ReentrantLock lock = new ReentrantLock(true);
 
-
     public CustomerSim(int maxTicketsToRetrieve, EventSim eventSim) {
         this.customerName = "C" + customerCount++;
         this.customerRetrievalRate = maxTicketsToRetrieve;
@@ -33,9 +32,8 @@ public class CustomerSim implements Runnable {
         while (!finalTransaction) {
             try {
                 Thread.sleep(simulationSpeed);
-                int ticketsToRetrieve = random.nextInt(customerRetrievalRate) + 1;
-
                 lock.lock();
+                int ticketsToRetrieve = random.nextInt(customerRetrievalRate) + 1;
                 try {
                     Thread.sleep(simulationSpeed);
                     if (Sim.activeVendors && ticketsToRetrieve > VendorSim.getTotalTicketLimit() - VendorSim.getTotalTicketsAdded()) {
@@ -47,7 +45,7 @@ public class CustomerSim implements Runnable {
 
                     if (finalTransaction && !messagePrinted) {
                         SimLog.logging("--- Customer " + customerName + " >>> Retrieved the last available tickets. \n\s\s\sEnding simulation.");
-                        Sim.stopSimulation(false); // Replace "eventId" with the actual event ID
+                        Sim.stopSimulation(false);
                         messagePrinted = true;
                         break;
                     }

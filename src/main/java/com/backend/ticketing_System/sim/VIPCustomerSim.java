@@ -6,6 +6,5 @@ public class VIPCustomerSim extends CustomerSim {
     public VIPCustomerSim(int maxTicketsToRetrieve, EventSim eventSim) {
         super(maxTicketsToRetrieve, eventSim);
         setCustomerName("VIP-C" + vipCustomerCount++);
-
     }
 }

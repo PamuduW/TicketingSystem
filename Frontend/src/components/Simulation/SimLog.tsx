@@ -4,38 +4,30 @@ import { UserContext } from "../Common/UserContext";
 
 const SimLog: React.FC = () => {
     const { eventId } = useParams<{ eventId: string }>();
-    const userContext = useContext(UserContext);
+    const { userData } = useContext(UserContext) || {};
     const [messages, setMessages] = useState<string[]>([]);
 
     useEffect(() => {
-        if (userContext?.userData) {
-            const socket = new WebSocket(`ws://localhost:8080/ws/text`);
-            // const socket = new WebSocket(
-            //     `wss://ticketing---system-32a1f2f59169.herokuapp.com/ws/text`
-            // );
+        if (userData) {
+            // const socket = new WebSocket(`ws://localhost:8080/ws/text`);
+            const socket = new WebSocket(
+                `wss://ticketing---system-32a1f2f59169.herokuapp.com/ws/text`
+            );
 
-            socket.onopen = () => {
+            socket.onopen = () =>
                 console.log("WebSocket connection established");
-            };
 
-            socket.onmessage = (event) => {
-                const newMessage = event.data;
-                setMessages((prevMessages) => [...prevMessages, newMessage]);
-            };
+            socket.onmessage = (event) =>
+                setMessages((prev) => [...prev, event.data]);
 
-            socket.onerror = (error) => {
+            socket.onerror = (error) =>
                 console.error("WebSocket error:", error);
-            };
 
-            socket.onclose = () => {
-                console.log("WebSocket connection closed");
-            };
+            socket.onclose = () => console.log("WebSocket connection closed");
 
-            return () => {
-                socket.close();
-            };
+            return () => socket.close();
         }
-    }, [eventId, userContext]);
+    }, [eventId, userData]);
 
     return (
         <div>

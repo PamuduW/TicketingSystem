@@ -16,7 +16,7 @@ interface Event {
 
 const UpdateEvent: React.FC = () => {
     const { eventId } = useParams<{ eventId: string }>();
-    const userContext = useContext(UserContext);
+    const { userData } = useContext(UserContext) || {};
     const navigate = useNavigate();
     const [event, setEvent] = useState<Event | null>(null);
     const [formData, setFormData] = useState({
@@ -29,14 +29,9 @@ const UpdateEvent: React.FC = () => {
 
     useEffect(() => {
         const fetchEvent = async () => {
-            if (userContext?.userData) {
-                const url = `/event/${eventId}`;
+            if (userData) {
                 try {
-                    const response = await API.get(url, {
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                    });
+                    const response = await API.get(`/event/${eventId}`);
                     setEvent(response.data);
                     setFormData({
                         name: response.data.name,
@@ -49,9 +44,8 @@ const UpdateEvent: React.FC = () => {
                 }
             }
         };
-
         fetchEvent();
-    }, [eventId, userContext]);
+    }, [eventId, userData]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -79,11 +73,7 @@ const UpdateEvent: React.FC = () => {
         }
         setError(null);
         try {
-            await API.put(`/event/${eventId}`, formData, {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
+            await API.put(`/event/${eventId}`, formData);
             navigate(`/event/${eventId}`);
         } catch (error) {
             console.error("Error updating event:", error);
@@ -103,10 +93,8 @@ const UpdateEvent: React.FC = () => {
                 )}
                 <div style={{ paddingBottom: 20 }}>
                     <TextField
-                        required={true}
-                        label={"Name"}
-                        type="text"
-                        id="name"
+                        required
+                        label="Name"
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
@@ -114,10 +102,8 @@ const UpdateEvent: React.FC = () => {
                 </div>
                 <div style={{ paddingBottom: 20 }}>
                     <TextField
-                        required={true}
-                        label={"Description"}
-                        type="text"
-                        id="desc"
+                        required
+                        label="Description"
                         name="desc"
                         value={formData.desc}
                         onChange={handleChange}
@@ -125,10 +111,9 @@ const UpdateEvent: React.FC = () => {
                 </div>
                 <div style={{ paddingBottom: 20 }}>
                     <TextField
-                        required={true}
-                        label={"Total Tickets"}
+                        required
+                        label="Total Tickets"
                         type="number"
-                        id="totalTickets"
                         name="totalTickets"
                         value={formData.totalTickets}
                         onChange={handleChange}
@@ -136,10 +121,9 @@ const UpdateEvent: React.FC = () => {
                 </div>
                 <div style={{ paddingBottom: 20 }}>
                     <TextField
-                        required={true}
-                        label={"Max Capacity"}
+                        required
+                        label="Max Capacity"
                         type="number"
-                        id="maxCapacity"
                         name="maxCapacity"
                         value={formData.maxCapacity}
                         onChange={handleChange}

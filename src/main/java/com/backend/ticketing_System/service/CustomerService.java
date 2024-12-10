@@ -39,16 +39,16 @@ public class CustomerService {
         }
     }
 
-    public Customer updateCustomer(String CustomerId, Customer CustomerDetails) throws IOException {
+    public Customer updateCustomer(String customerId, Customer customerDetails) throws IOException {
         lock.lock();
         try {
-            Optional<Customer> optionalCustomer = customerRepo.findById(CustomerId);
-            if (optionalCustomer.isPresent()) {
-                Customer Customer = optionalCustomer.get();
-                Customer.setUsername(CustomerDetails.getUsername());
-                Customer.setPass(CustomerDetails.getPass());
-                return customerRepo.save(Customer);
-            } else throw new IOException("Customer not found with id " + CustomerId);
+            return customerRepo.findById(customerId)
+                    .map(existingCustomer -> {
+                        existingCustomer.setUsername(customerDetails.getUsername());
+                        existingCustomer.setPass(customerDetails.getPass());
+                        return customerRepo.save(existingCustomer);
+                    })
+                    .orElseThrow(() -> new IOException("Customer not found with id " + customerId));
         } finally {
             lock.unlock();
         }

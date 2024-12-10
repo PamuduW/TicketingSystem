@@ -16,31 +16,19 @@ public class TextWebSocketHandler extends org.springframework.web.socket.handler
 
     @Override
     public void afterConnectionEstablished(@NonNull WebSocketSession session) {
-        try {
-            sessions.add(session);
-        } catch (Exception e) {
-            logger.error("Error adding session", e);
-        }
+        sessions.add(session);
     }
 
     @Override
     public void handleTextMessage(@NonNull WebSocketSession session, @NonNull TextMessage message) {
-        try {
-            String payload = message.getPayload();
-            logger.info("Received message: {}", payload);
-            broadcast(payload);
-        } catch (Exception e) {
-            logger.error("Error handling text message", e);
-        }
+        String payload = message.getPayload();
+        logger.info("Received message: {}", payload);
+        broadcast(payload);
     }
 
     @Override
     public void afterConnectionClosed(@NonNull WebSocketSession session, @NonNull CloseStatus status) {
-        try {
-            sessions.remove(session);
-        } catch (Exception e) {
-            logger.error("Error removing session", e);
-        }
+        sessions.remove(session);
     }
 
     public static void broadcast(String message) {

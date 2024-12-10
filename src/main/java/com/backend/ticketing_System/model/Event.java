@@ -30,4 +30,5 @@ public class Event {
     private Set<String> vendors = new HashSet<>();
     private List<String> Logs = new ArrayList<>();
     private List<List<List<Integer>>> IntLogs = new ArrayList<>();
+    private List<Integer> config = new ArrayList<>();
 }

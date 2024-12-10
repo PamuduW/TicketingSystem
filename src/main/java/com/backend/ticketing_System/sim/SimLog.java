@@ -15,18 +15,15 @@ public class SimLog {
 
     public static void logging(String logM) {
         String timestamp = LocalDateTime.now().format(formatter);
-        String str = "---[" + timestamp + "]" + logM;
+        String str = String.format("---[%s]%s", timestamp, logM);
         TextWebSocketHandler.broadcast(str);
         log += str + "\n";
     }
 
     public static void loggingWithNums(String logM, int currentTickets, int allSoldTickets, boolean finalTransaction) {
         logging(logM);
-        List<Integer> nums = new ArrayList<>();
-        if (finalTransaction)
-            currentTickets = 0;
-        nums.add(currentTickets);
-        nums.add(allSoldTickets);
+        if (finalTransaction) currentTickets = 0;
+        List<Integer> nums = List.of(currentTickets, allSoldTickets);
         IntegerWebSocketHandler.broadcast(currentTickets, allSoldTickets);
         logInt.add(nums);
     }

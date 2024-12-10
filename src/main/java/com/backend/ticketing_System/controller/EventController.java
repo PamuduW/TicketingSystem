@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.Dictionary;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -29,8 +28,9 @@ public class EventController {
 
     @GetMapping("/event/{id}")
     public ResponseEntity<Event> getEventById(@PathVariable String id) {
-        Optional<Event> event = eventService.getEventById(id);
-        return event.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return eventService.getEventById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping("/event")
@@ -48,15 +48,14 @@ public class EventController {
     }
 
     @GetMapping("/events/vendor/{vendorId}")
-    public List<Event> getAllEventsByVendorId(@PathVariable String vendorId){
+    public List<Event> getAllEventsByVendorId(@PathVariable String vendorId) {
         return eventService.getAllByVendorId(vendorId);
     }
 
     @PutMapping("/event/{id}")
     public ResponseEntity<?> updateEvent(@PathVariable String id, @RequestBody Event eventDetails) {
         try {
-            Event updatedEvent = eventService.updateEvent(id, eventDetails);
-            return ResponseEntity.ok(updatedEvent);
+            return ResponseEntity.ok(eventService.updateEvent(id, eventDetails));
         } catch (IOException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
@@ -65,27 +64,24 @@ public class EventController {
     @PutMapping("/event/{id}/vendors")
     public ResponseEntity<?> updateEventVendors(@PathVariable String id, @RequestBody List<String> vendors) {
         try {
-            Event updatedEvent = eventService.updateEventVendors(id, vendors);
-            return ResponseEntity.ok(updatedEvent);
+            return ResponseEntity.ok(eventService.updateEventVendors(id, vendors));
         } catch (IOException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
     }
 
     @PutMapping("/event/{id}/addTickets")
-    public ResponseEntity<?> addTickets(@PathVariable String id, @RequestParam int ticketCount){
+    public ResponseEntity<?> addTickets(@PathVariable String id, @RequestParam int ticketCount) {
         try {
-            return ResponseEntity.ok().body(eventService.addTickets(id, ticketCount));
+            return ResponseEntity.ok(eventService.addTickets(id, ticketCount));
         } catch (IOException e) {
-            if (e.getMessage().equals("Exceeded the total ticket limit"))
-                return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-            else
-                return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+            HttpStatus status = e.getMessage().equals("Exceeded the total ticket limit") ? HttpStatus.BAD_REQUEST : HttpStatus.CONFLICT;
+            return new ResponseEntity<>(e.getMessage(), status);
         }
     }
 
     @PutMapping("/event/{id}/buyTickets")
-    public ResponseEntity<?> buyTickets(@PathVariable String id, @RequestParam int ticketCount, @RequestParam String customerId){
+    public ResponseEntity<?> buyTickets(@PathVariable String id, @RequestParam int ticketCount, @RequestParam String customerId) {
         try {
             eventService.buyTickets(id, ticketCount, customerId);
             return ResponseEntity.ok().build();
@@ -95,7 +91,7 @@ public class EventController {
     }
 
     @GetMapping("/event/tickets/{customerId}")
-    public Dictionary<String, List<String>> getTicketsByCustomerId(@PathVariable String customerId){
+    public Dictionary<String, List<String>> getTicketsByCustomerId(@PathVariable String customerId) {
         return eventService.getTicketsByCustomerId(customerId);
     }
 
@@ -134,7 +130,7 @@ public class EventController {
         try {
             eventService.saveLogs(id);
             return ResponseEntity.ok().build();
-        } catch (IOException e) {
+        } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
     }

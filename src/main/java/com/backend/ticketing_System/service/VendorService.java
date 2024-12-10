@@ -46,13 +46,13 @@ public class VendorService {
     public Vendor updateVendor(String vendorId, Vendor vendorDetails) throws IOException {
         lock.lock();
         try {
-            Optional<Vendor> optionalVendor = vendorRepo.findById(vendorId);
-            if (optionalVendor.isPresent()) {
-                Vendor vendor = optionalVendor.get();
-                vendor.setUsername(vendorDetails.getUsername());
-                vendor.setPass(vendorDetails.getPass());
-                return vendorRepo.save(vendor);
-            } else throw new IOException("Vendor not found with id " + vendorId);
+            return vendorRepo.findById(vendorId)
+                    .map(existingVendor -> {
+                        existingVendor.setUsername(vendorDetails.getUsername());
+                        existingVendor.setPass(vendorDetails.getPass());
+                        return vendorRepo.save(existingVendor);
+                    })
+                    .orElseThrow(() -> new IOException("Vendor not found with id " + vendorId));
         } finally {
             lock.unlock();
         }
@@ -62,7 +62,7 @@ public class VendorService {
         lock.lock();
         try {
             if (vendorRepo.findById(vendorId).isEmpty())
-                throw new IOException("this Vendor does not exists");
+                throw new IOException("This vendor does not exist");
             vendorRepo.deleteById(vendorId);
         } finally {
             lock.unlock();

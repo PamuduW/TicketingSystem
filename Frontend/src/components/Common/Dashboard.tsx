@@ -20,40 +20,31 @@ interface Event {
 }
 
 const Dashboard: React.FC = () => {
-    const userContext = useContext(UserContext);
+    const { userData } = useContext(UserContext) || {};
     const [events, setEvents] = useState<Event[]>([]);
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchEvents = async () => {
-            if (userContext && userContext.userData) {
-                const url = userContext.userData.isVendor
-                    ? "/events/vendor/" + userContext.userData.userId
+            if (userData) {
+                const url = userData.isVendor
+                    ? `/events/vendor/${userData.userId}`
                     : "/events";
                 try {
-                    const response = await API.get(url, {
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
+                    const { data } = await API.get(url, {
+                        headers: { "Content-Type": "application/json" },
                     });
-                    setEvents(response.data);
+                    setEvents(data);
                 } catch (error) {
                     console.error("Error fetching events:", error);
                 }
             }
         };
-
         fetchEvents();
-    }, [userContext]);
+    }, [userData]);
 
-    const handleEventClick = (eventId: string) => {
-        navigate(`/event/${eventId}`);
-    };
-
-    const handleCreateEventClick = () => {
-        navigate("/createEvent");
-    };
-
+    const handleEventClick = (eventId: string) => navigate(`/event/${eventId}`);
+    const handleCreateEventClick = () => navigate("/createEvent");
     const handleLogout = () => {
         navigate("/");
         window.location.reload();
@@ -62,37 +53,33 @@ const Dashboard: React.FC = () => {
     return (
         <div>
             <h1>Dashboard</h1>
-            {userContext && userContext.userData ? (
+            {userData ? (
                 <div>
-                    <h3 className={"user-details"}>
-                        Welcome, {userContext.userData.username}
+                    <h3 className="user-details">
+                        Welcome, {userData.username}
                     </h3>
-                    <p className={"user-details"}>
-                        Id: {userContext.userData.userId}
+                    <p className="user-details">Id: {userData.userId}</p>
+                    <p className="user-details">
+                        Role: {userData.isVendor ? "Vendor" : "Customer"}
                     </p>
-                    <p className={"user-details"}>
-                        Role:{" "}
-                        {userContext.userData.isVendor ? "Vendor" : "Customer"}
-                    </p>
-                    <div className={"user-details"}>
+                    <div className="user-details">
                         <Button variant="text" onClick={handleLogout}>
                             Logout
                         </Button>
                     </div>
-                    <div className={"user-details"}>
-                        {userContext?.userData?.isVendor && (
+                    {userData.isVendor && (
+                        <div className="user-details">
                             <Button
                                 variant="outlined"
                                 onClick={handleCreateEventClick}
                             >
                                 Create an Event
                             </Button>
-                        )}
-                    </div>
-
+                        </div>
+                    )}
                     <h2>Events</h2>
                     {events.length > 0 ? (
-                        <div className={"events-grid"}>
+                        <div className="events-grid">
                             {events.map((event) => (
                                 <div
                                     key={event.eventId}

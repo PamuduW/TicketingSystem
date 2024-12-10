@@ -8,12 +8,6 @@ interface Event {
     eventId: string;
     name: string;
     ownerId: string;
-    desc: string;
-    totalTickets: number;
-    maxCapacity: number;
-    currentTickets: number;
-    issuedTickets: number;
-    totalTicketsAdded: number;
     vendors: string[];
 }
 
@@ -36,27 +30,21 @@ const AddVendors: React.FC = () => {
     useEffect(() => {
         const fetchEvent = async () => {
             if (userContext?.userData) {
-                const url = `/event/${eventId}`;
                 try {
-                    const response = await API.get(url, {
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                    });
+                    const response = await API.get(`/event/${eventId}`);
                     setEvent(response.data);
-                    setSelectedVendors(response.data.vendors); // Initialize selectedVendors with event vendors
+                    setSelectedVendors(response.data.vendors);
                 } catch (error) {
                     console.error("Error fetching event:", error);
                 }
             }
         };
-
         fetchEvent();
     }, [eventId, userContext]);
 
     useEffect(() => {
         if (event) {
-            event.vendors.forEach((vendorId: string) => {
+            event.vendors.forEach((vendorId) => {
                 if (!vendorDetails[vendorId]) {
                     fetchVendorDetails(vendorId);
                 }
@@ -66,11 +54,7 @@ const AddVendors: React.FC = () => {
 
     const fetchVendorDetails = async (vendorId: string) => {
         try {
-            const response = await API.get(`/vendor/${vendorId}`, {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
+            const response = await API.get(`/vendor/${vendorId}`);
             setVendorDetails((prevDetails) => ({
                 ...prevDetails,
                 [vendorId]: response.data,
@@ -83,17 +67,12 @@ const AddVendors: React.FC = () => {
     useEffect(() => {
         const fetchAllVendors = async () => {
             try {
-                const response = await API.get("/vendors", {
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                });
+                const response = await API.get("/vendors");
                 setAllVendors(response.data);
             } catch (error) {
                 console.error("Error fetching all vendors:", error);
             }
         };
-
         fetchAllVendors();
     }, []);
 
@@ -107,16 +86,7 @@ const AddVendors: React.FC = () => {
 
     const handleChangeVendors = async () => {
         try {
-            const response = await API.put(
-                `/event/${eventId}/vendors`,
-                selectedVendors,
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
-            console.log("Response:", response.data);
+            await API.put(`/event/${eventId}/vendors`, selectedVendors);
             alert("Vendors updated successfully");
             navigate(`/event/${eventId}`);
         } catch (error) {
@@ -131,28 +101,23 @@ const AddVendors: React.FC = () => {
     return (
         <div>
             <h2 style={{ margin: 50 }}>Change Vendors</h2>
-            <h3 className={"user-details"}>Current Vendors</h3>
+            <h3 className="user-details">Current Vendors</h3>
             {event.vendors.map((vendorId) => (
-                <p key={vendorId} className={"user-details"}>
+                <p key={vendorId} className="user-details">
                     {vendorDetails[vendorId]?.username || "Loading..."}
                 </p>
             ))}
-            <h3 className={"user-details"} style={{ marginTop: 30 }}>
+            <h3 className="user-details" style={{ marginTop: 30 }}>
                 All Vendors
             </h3>
             <form>
                 {allVendors.map(
                     (vendor) =>
                         vendor.vendorId !== event.ownerId && (
-                            <div
-                                key={vendor.vendorId}
-                                className={"user-details"}
-                            >
+                            <div key={vendor.vendorId} className="user-details">
                                 <label>
                                     <input
                                         type="checkbox"
-                                        id={vendor.vendorId}
-                                        value={vendor.vendorId}
                                         checked={selectedVendors.includes(
                                             vendor.vendorId
                                         )}
@@ -167,7 +132,7 @@ const AddVendors: React.FC = () => {
                             </div>
                         )
                 )}
-                <div className={"buttons"}>
+                <div className="buttons">
                     <Button
                         type="button"
                         variant="outlined"

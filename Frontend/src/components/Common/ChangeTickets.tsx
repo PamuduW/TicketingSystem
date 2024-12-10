@@ -8,7 +8,7 @@ import axios from "axios";
 
 const ChangeTickets: React.FC = () => {
     const { eventId } = useParams<{ eventId: string }>();
-    const userContext = useContext(UserContext);
+    const { userData } = useContext(UserContext) || {};
     const navigate = useNavigate();
     const [ticketCount, setTicketCount] = useState<number | "">("");
     const [errorMessage, setErrorMessage] = useState("");
@@ -23,32 +23,28 @@ const ChangeTickets: React.FC = () => {
             setErrorMessage("Cannot enter negative numbers");
             return;
         }
-        if (userContext?.userData && ticketCount !== "") {
-            const userId = userContext.userData.userId;
-            const isVendor = userContext.userData.isVendor;
+        if (userData && ticketCount !== "") {
+            const { userId, isVendor } = userData;
             const url = isVendor
                 ? `/event/${eventId}/addTickets?ticketCount=${ticketCount}`
                 : `/event/${eventId}/buyTickets?ticketCount=${ticketCount}&customerId=${userId}`;
             try {
-                const response = await API.put(url, null, {
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
+                await API.put(url, null, {
+                    headers: { "Content-Type": "application/json" },
                 });
-                console.log("Response:", response.data);
                 alert("Tickets updated successfully");
                 navigate(`/event/${eventId}`);
             } catch (error: unknown) {
-                console.error("Error:", error);
                 if (axios.isAxiosError(error) && error.response) {
+                    const { status, data } = error.response;
                     if (
-                        error.response.status === 409 &&
-                        error.response.data === "There are no tickets available"
+                        status === 409 &&
+                        data === "There are no tickets available"
                     ) {
                         setErrorMessage("Exceeded the available ticket limit");
-                    } else if (error.response.status === 409) {
+                    } else if (status === 409) {
                         setErrorMessage("Exceeded the ticket pool limit");
-                    } else if (error.response.status === 400) {
+                    } else if (status === 400) {
                         setErrorMessage("Exceeded the total ticket limit");
                     } else {
                         setErrorMessage("An error occurred. Please try again.");
@@ -60,15 +56,13 @@ const ChangeTickets: React.FC = () => {
 
     return (
         <form onSubmit={handleSubmit} style={{ textAlign: "center" }}>
-            {userContext?.userData?.isVendor ? (
-                <h2 style={{ margin: 50 }}>Add Tickets</h2>
-            ) : (
-                <h2 style={{ margin: 50 }}>Buy Tickets</h2>
-            )}
+            <h2 style={{ margin: 50 }}>
+                {userData?.isVendor ? "Add Tickets" : "Buy Tickets"}
+            </h2>
             <div style={{ paddingBottom: 15 }}>
                 <TextField
-                    required={true}
-                    label={"Number of Tickets"}
+                    required
+                    label="Number of Tickets"
                     type="number"
                     value={ticketCount}
                     onChange={handleChange}

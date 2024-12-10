@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import SimInputForm from "./SimInputForm.tsx";
 import SimLog from "./SimLog.tsx";
@@ -10,14 +10,12 @@ import Box from "@mui/material/Box";
 const Simulation: React.FC = () => {
     const { eventId } = useParams<{ eventId: string }>();
     const navigate = useNavigate();
+    const [reload, setReload] = useState(false);
 
-    if (!eventId) {
-        return <p>Error: Event ID is missing</p>;
-    }
+    if (!eventId) return <p>Error: Event ID is missing</p>;
 
-    const handleBackToEvent = () => {
-        navigate(`/event/${eventId}`);
-    };
+    const handleBackToEvent = () => navigate(`/event/${eventId}`);
+    const handleReload = () => setReload(!reload);
 
     return (
         <>
@@ -30,16 +28,16 @@ const Simulation: React.FC = () => {
                 style={{
                     display: "grid",
                     gridTemplateColumns: "1fr 1fr",
-                    gap: "20px",
-                    marginBottom: "50px",
+                    gap: 20,
+                    marginBottom: 50,
                 }}
             >
-                <SimInputForm eventId={eventId} />
+                <SimInputForm eventId={eventId} onReload={handleReload} />
                 <SimData eventId={eventId} />
             </div>
-            <SimProgress />
+            <SimProgress key={String(reload)} />
             <Box sx={{ height: 300, overflowY: "auto", marginTop: 2 }}>
-                <SimLog />
+                <SimLog key={String(reload)} />
             </Box>
         </>
     );

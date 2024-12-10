@@ -10,6 +10,6 @@ server:
   port: 8080
 
 frontend:
-  url:
+  urls:
     -https://ticketing-system-git-main-pamuduws-projects.vercel.app/
     -http://localhost:5173

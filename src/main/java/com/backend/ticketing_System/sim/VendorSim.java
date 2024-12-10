@@ -36,8 +36,8 @@ public class VendorSim implements Runnable {
         while (totalTicketsAdded < totalTicketLimit) {
             try {
                 Thread.sleep(simulationSpeed);
-                int ticketsToAdd = random.nextInt(vendorReleaseRate) + 1;
                 lock.lock();
+                int ticketsToAdd = Math.min(random.nextInt(vendorReleaseRate) + 1, totalTicketLimit - totalTicketsAdded);
                 try {
                     Thread.sleep(simulationSpeed);
                     if (totalTicketsAdded == totalTicketLimit) {
@@ -47,9 +47,6 @@ public class VendorSim implements Runnable {
                             messagePrinted = true;
                         }
                         break;
-                    }
-                    if (totalTicketsAdded + ticketsToAdd > totalTicketLimit) {
-                        ticketsToAdd = totalTicketLimit - totalTicketsAdded;
                     }
                     eventSim.addTickets(vendorName, ticketsToAdd);
                     totalTicketsAdded += ticketsToAdd;

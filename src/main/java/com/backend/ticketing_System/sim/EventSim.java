@@ -30,14 +30,14 @@ public class EventSim {
             SimLog.logging(String.format("--- Vendor %s >>> trying to add %d tickets", vendorName, ticketsToAdd));
             while (currentTickets + ticketsToAdd > maxCapacity) {
                 try {
-                    SimLog.logging("--- Vendor " + vendorName + " >>>  Waiting, ticket pool at max capacity.");
+                    SimLog.logging("--- Vendor " + vendorName + " >>> Waiting, ticket pool at max capacity.");
                     poolFull.await();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
             }
             currentTickets += ticketsToAdd;
-            SimLog.loggingWithNums(String.format("--- Vendor %s >>> Added %d tickets. Current tickets : %d. All sold Tickets : %d", vendorName, ticketsToAdd, currentTickets, allSoldTickets), currentTickets, allSoldTickets, false);
+            SimLog.loggingWithNums(String.format("--- Vendor %s >>> Added %d tickets. Current tickets: %d. All sold Tickets: %d", vendorName, ticketsToAdd, currentTickets, allSoldTickets), currentTickets, allSoldTickets, false);
             poolEmpty.signalAll();
         } finally {
             lock.unlock();
@@ -52,7 +52,7 @@ public class EventSim {
             if (currentTickets < ticketsToRetrieve) {
                 if (finalTransaction) {
                     allSoldTickets += currentTickets;
-                    SimLog.loggingWithNums(String.format("--- Customer %s >>> Retrieved remaining %d tickets. Current tickets : 0. All sold Tickets : %d. (final transaction)", customerName, currentTickets, allSoldTickets), currentTickets, allSoldTickets, true);
+                    SimLog.loggingWithNums(String.format("--- Customer %s >>> Retrieved remaining %d tickets. Current tickets: 0. All sold Tickets: %d. (final transaction)", customerName, currentTickets, allSoldTickets), currentTickets, allSoldTickets, true);
                     return;
                 } else {
                     while (currentTickets < ticketsToRetrieve) {
@@ -67,7 +67,7 @@ public class EventSim {
             }
             currentTickets -= ticketsToRetrieve;
             allSoldTickets += ticketsToRetrieve;
-            SimLog.loggingWithNums(String.format("--- Customer %s >>> Retrieved %d tickets. Current tickets : %d. All sold Tickets : %d", customerName, ticketsToRetrieve, currentTickets, allSoldTickets), currentTickets, allSoldTickets, false);
+            SimLog.loggingWithNums(String.format("--- Customer %s >>> Retrieved %d tickets. Current tickets: %d. All sold Tickets: %d", customerName, ticketsToRetrieve, currentTickets, allSoldTickets), currentTickets, allSoldTickets, false);
             poolFull.signalAll();
         } finally {
             lock.unlock();

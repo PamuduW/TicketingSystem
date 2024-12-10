@@ -17,66 +17,49 @@ interface Event {
 }
 
 const SimData: React.FC<SimDataProps> = ({ eventId }) => {
-    const userContext = useContext(UserContext);
+    const { userData } = useContext(UserContext) || {};
     const [event, setEvent] = useState<Event | null>(null);
     const [currentTickets, setCurrentTickets] = useState<number[]>([]);
     const [allSoldTickets, setAllSoldTickets] = useState<number[]>([]);
 
-    const fetchEvent = async () => {
-        if (userContext?.userData) {
-            const url = `/event/${eventId}`;
-            try {
-                const response = await API.get(url, {
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                });
-                setEvent(response.data);
-            } catch (error) {
-                console.error("Error fetching event:", error);
+    useEffect(() => {
+        const fetchEvent = async () => {
+            if (userData) {
+                try {
+                    const response = await API.get(`/event/${eventId}`);
+                    setEvent(response.data);
+                } catch (error) {
+                    console.error("Error fetching event:", error);
+                }
             }
-        }
-    };
-
-    useEffect(() => {
+        };
         fetchEvent();
-    }, [eventId, userContext]);
+    }, [eventId, userData]);
 
     useEffect(() => {
-        if (userContext?.userData) {
-            const socket = new WebSocket(`ws://localhost:8080/ws/integers`);
-            // const socket = new WebSocket(
-            //     `wss://ticketing---system-32a1f2f59169.herokuapp.com/ws/integers`
-            // );
+        if (userData) {
+            // const socket = new WebSocket(`ws://localhost:8080/ws/integers`);
+            const socket = new WebSocket(
+                `wss://ticketing---system-32a1f2f59169.herokuapp.com/ws/integers`
+            );
 
-            socket.onopen = () => {
+            socket.onopen = () =>
                 console.log("WebSocket connection established");
-            };
 
             socket.onmessage = (event) => {
-                const message = event.data;
-                const parts = message.split(",").map(Number);
+                const parts = event.data.split(",").map(Number);
                 const half = Math.ceil(parts.length / 2);
-                const newCurrentTickets = parts.slice(0, half);
-                const newAllSoldTickets = parts.slice(half);
-
-                setCurrentTickets(newCurrentTickets);
-                setAllSoldTickets(newAllSoldTickets);
+                setCurrentTickets(parts.slice(0, half));
+                setAllSoldTickets(parts.slice(half));
             };
 
-            socket.onerror = (error) => {
+            socket.onerror = (error) =>
                 console.error("WebSocket error:", error);
-            };
+            socket.onclose = () => console.log("WebSocket connection closed");
 
-            socket.onclose = () => {
-                console.log("WebSocket connection closed");
-            };
-
-            return () => {
-                socket.close();
-            };
+            return () => socket.close();
         }
-    }, [userContext]);
+    }, [userData]);
 
     useEffect(() => {
         if (
@@ -85,11 +68,7 @@ const SimData: React.FC<SimDataProps> = ({ eventId }) => {
         ) {
             const saveLogs = async () => {
                 try {
-                    await API.post(`/event/${eventId}/saveLogs`, {
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                    });
+                    await API.post(`/event/${eventId}/saveLogs`);
                     console.log("Logs saved successfully");
                 } catch (error) {
                     console.error("Error saving logs:", error);
@@ -99,55 +78,33 @@ const SimData: React.FC<SimDataProps> = ({ eventId }) => {
         }
     }, [allSoldTickets, eventId, event]);
 
-    if (!event) {
-        return <p>Loading...</p>;
-    }
+    if (!event) return <p>Loading...</p>;
 
     const allAddedTickets =
         currentTickets.reduce((acc, ticket) => acc + ticket, 0) +
         allSoldTickets.reduce((acc, ticket) => acc + ticket, 0);
-
     const progress =
         (allSoldTickets.reduce((acc, ticket) => acc + ticket, 0) /
             event.totalTickets) *
         100;
-
     const buffer = (allAddedTickets / event.totalTickets) * 100;
 
     const getChipProps = () => {
-        if (allSoldTickets.length === 0) {
-            return {
-                label: "Not Started",
-                color: "warning" as "warning" | "primary" | "success",
-            };
-        } else if (
-            allSoldTickets.reduce((acc, ticket) => acc + ticket, 0) ===
-            event.totalTickets
-        ) {
-            return {
-                label: "Finished",
-                color: "primary" as "warning" | "primary" | "success",
-            };
-        } else {
-            return {
-                label: "Running",
-                color: "success" as "warning" | "primary" | "success",
-            };
-        }
+        const totalSold = allSoldTickets.reduce(
+            (acc, ticket) => acc + ticket,
+            0
+        );
+        if (totalSold === 0)
+            return { label: "Not Started", color: "warning" as const };
+        if (totalSold === event.totalTickets)
+            return { label: "Finished", color: "primary" as const };
+        return { label: "Running", color: "success" as const };
     };
-
-    const chipProps = getChipProps();
 
     return (
         <div>
             <h2>Simulation Data</h2>
-            <div>
-                <Chip
-                    label={chipProps.label}
-                    color={chipProps.color}
-                    variant="outlined"
-                />
-            </div>
+            <Chip {...getChipProps()} variant="outlined" />
             <h3>Static Data</h3>
             <div>Event Name - {event.name}</div>
             <div>Total Tickets - {event.totalTickets}</div>

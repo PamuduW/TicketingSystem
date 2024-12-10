@@ -2,7 +2,6 @@ package com.backend.ticketing_System.service;
 
 import com.backend.ticketing_System.model.Event;
 import com.backend.ticketing_System.model.Ticket;
-import com.backend.ticketing_System.model.Vendor;
 import com.backend.ticketing_System.repository.EventRepository;
 import com.backend.ticketing_System.repository.VendorRepository;
 import com.backend.ticketing_System.sim.Sim;
@@ -53,11 +52,8 @@ public class EventService {
     public List<Event> getAllByVendorId(String vendorId) {
         List<Event> list = new ArrayList<>();
         for (Event event : eventRepo.findAll()) {
-            for (String optionalVendorId : event.getVendors()) {
-                if (optionalVendorId.equals(vendorId)) {
-                    list.add(event);
-                    break;
-                }
+            if (event.getVendors().contains(vendorId)) {
+                list.add(event);
             }
         }
         return list;
@@ -66,17 +62,15 @@ public class EventService {
     public Event updateEvent(String eventId, Event eventDetails) throws IOException {
         lock.lock();
         try {
-            Optional<Event> optionalEvent = eventRepo.findById(eventId);
-            if (optionalEvent.isPresent()) {
-                Event event = optionalEvent.get();
-                event.setName(eventDetails.getName());
-                event.setDesc(eventDetails.getDesc());
-                event.setTotalTickets(eventDetails.getTotalTickets());
-                event.setMaxCapacity(eventDetails.getMaxCapacity());
-                return eventRepo.save(event);
-            } else {
-                throw new IOException("Event not found with id " + eventId);
-            }
+            return eventRepo.findById(eventId)
+                    .map(event -> {
+                        event.setName(eventDetails.getName());
+                        event.setDesc(eventDetails.getDesc());
+                        event.setTotalTickets(eventDetails.getTotalTickets());
+                        event.setMaxCapacity(eventDetails.getMaxCapacity());
+                        return eventRepo.save(event);
+                    })
+                    .orElseThrow(() -> new IOException("Event not found with id " + eventId));
         } finally {
             lock.unlock();
         }
@@ -85,22 +79,16 @@ public class EventService {
     public Event updateEventVendors(String eventId, List<String> vendors) throws IOException {
         lock.lock();
         try {
-            Optional<Event> optionalEvent = eventRepo.findById(eventId);
-            if (optionalEvent.isPresent()) {
-                Event event = optionalEvent.get();
-                Set<String> set = new HashSet<>();
-                for (String vendorId : vendors) {
-                    Optional<Vendor> optionalVendor = vendorRepo.findById(vendorId);
-                    if (optionalVendor.isPresent()) {
-                        Vendor vendor = optionalVendor.get();
-                        set.add(vendor.getVendorId());
-                    }
-                }
-                event.setVendors(set);
-                return eventRepo.save(event);
-            } else {
-                throw new IOException("Event not found with id " + eventId);
-            }
+            return eventRepo.findById(eventId)
+                    .map(event -> {
+                        Set<String> set = new HashSet<>();
+                        for (String vendorId : vendors) {
+                            vendorRepo.findById(vendorId).ifPresent(vendor -> set.add(vendor.getVendorId()));
+                        }
+                        event.setVendors(set);
+                        return eventRepo.save(event);
+                    })
+                    .orElseThrow(() -> new IOException("Event not found with id " + eventId));
         } finally {
             lock.unlock();
         }
@@ -160,10 +148,9 @@ public class EventService {
         for (Event event : eventRepo.findAll()) {
             List<String> list = new ArrayList<>();
             for (Ticket ticket : event.getTickets()) {
-                if (ticket.getCustomerId() == null)
-                    continue;
-                if (ticket.getCustomerId().equals(customerId))
+                if (customerId.equals(ticket.getCustomerId())) {
                     list.add(ticket.getTicketId());
+                }
             }
             dic.put(event.getEventId(), list);
         }
@@ -184,12 +171,10 @@ public class EventService {
     public void startSimulation(String eventID, int vendorReleaseRate, int customerRetrievalRate, int noOfVendors, int noOfCustomers, int noOfVIPCustomers, int simSpeed) throws IOException {
         lock.lock();
         try {
-            if (eventRepo.findById(eventID).isPresent()) {
-                int totalTickets = eventRepo.findById(eventID).get().getTotalTickets();
-                int maxTicketCapacity = eventRepo.findById(eventID).get().getMaxCapacity();
-                if (!Sim.startSimulation(totalTickets, vendorReleaseRate, customerRetrievalRate, maxTicketCapacity, noOfVendors, noOfCustomers, noOfVIPCustomers, simSpeed, eventID))
-                    throw new IOException("Simulation is already running.");
-            } else throw new IOException("Event not found with id " + eventID);
+            Event event = eventRepo.findById(eventID).orElseThrow(() -> new IOException("Event not found with id " + eventID));
+            if (!Sim.startSimulation(event.getTotalTickets(), vendorReleaseRate, customerRetrievalRate, event.getMaxCapacity(), noOfVendors, noOfCustomers, noOfVIPCustomers, simSpeed, eventID)) {
+                throw new IOException("Simulation is already running.");
+            }
         } finally {
             lock.unlock();
         }
@@ -201,21 +186,22 @@ public class EventService {
             if (eventRepo.findById(id).isPresent()) {
                 if (!Sim.stopSimulation(true))
                     throw new IOException("Simulation is not running.");
-            } else throw new RuntimeException("Event not found with id " + id);
+            } else {
+                throw new IOException("Event not found with id " + id);
+            }
         } finally {
             lock.unlock();
         }
     }
 
-    public void saveLogs(String id) throws IOException {
+    public void saveLogs(String id) {
         lock.lock();
         try {
-            if (eventRepo.findById(id).isPresent()) {
-               Event event = eventRepo.findById(id).get();
-               event.getLogs().add(SimLog.log);
-               event.getIntLogs().add(SimLog.logInt);
-               eventRepo.save(event);
-            }
+            eventRepo.findById(id).ifPresent(event -> {
+                event.getLogs().add(SimLog.log);
+                event.getIntLogs().add(SimLog.logInt);
+                eventRepo.save(event);
+            });
         } finally {
             lock.unlock();
         }

@@ -6,10 +6,11 @@ import Button from "@mui/material/Button";
 
 interface SimInputFormProps {
     eventId: string;
+    onReload: () => void;
 }
 
-const SimInputForm: React.FC<SimInputFormProps> = ({ eventId }) => {
-    const [inputs, setInputs] = useState<number[]>(Array(6).fill(""));
+const SimInputForm: React.FC<SimInputFormProps> = ({ eventId, onReload }) => {
+    const [inputs, setInputs] = useState<number[]>(Array(6).fill(0));
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const qNames = [
         "vendor release rate",
@@ -28,23 +29,17 @@ const SimInputForm: React.FC<SimInputFormProps> = ({ eventId }) => {
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        for (let i = 0; i < inputs.length; i++) {
-            if (inputs[i] < 0) {
-                setErrorMessage("Cannot enter negative numbers");
-                return;
-            }
+        if (inputs.some((input) => input < 0)) {
+            setErrorMessage("Cannot enter negative numbers");
+            return;
         }
         setErrorMessage(null);
-        console.log("Sending data:", inputs); // Log the data being sent
         try {
-            const response = await API.post(
-                `/event/${eventId}/startSim`,
-                inputs // Send the array directly
-            );
-            console.log("Response:", response.data);
+            await API.post(`/event/${eventId}/startSim`, inputs);
+            onReload();
         } catch (error: unknown) {
             if (axios.isAxiosError(error) && error.response) {
-                if (error.response && error.response.status === 409) {
+                if (error.response.status === 409) {
                     alert("The simulation is already running");
                 } else {
                     console.error("Error:", error);
@@ -55,15 +50,16 @@ const SimInputForm: React.FC<SimInputFormProps> = ({ eventId }) => {
 
     const handleStopSim = async () => {
         try {
-            const response = await API.post(`/event/${eventId}/stopSim`);
-            console.log("Response:", response.data);
+            await API.post(`/event/${eventId}/stopSim`);
         } catch (error: unknown) {
             if (axios.isAxiosError(error) && error.response) {
-                if (error.response && error.response.status === 409 && error.response.data === "Simulation is not running.") {
-                    alert("The simulation is not running");
-                } if (error.response && error.response.status === 409) {
-                    alert("Event not found");
-                }else {
+                if (error.response.status === 409) {
+                    alert(
+                        error.response.data === "Simulation is not running."
+                            ? "The simulation is not running"
+                            : "Event not found"
+                    );
+                } else {
                     console.error("Error:", error);
                 }
             }
@@ -73,14 +69,13 @@ const SimInputForm: React.FC<SimInputFormProps> = ({ eventId }) => {
     return (
         <form onSubmit={handleSubmit}>
             <h2>Simulation Configuration</h2>
-            {inputs.map((input, index) => (
+            {qNames.map((label, index) => (
                 <div key={index} style={{ marginBottom: 20 }}>
                     <TextField
-                        id="outlined-basic"
-                        label={qNames[index]}
+                        label={label}
                         variant="outlined"
                         type="number"
-                        value={input}
+                        value={inputs[index]}
                         onChange={(e) => handleChange(index, e.target.value)}
                     />
                 </div>
