@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import API from "../../axios.tsx";
 import TextField from "@mui/material/TextField";
 import axios from "axios";
@@ -20,6 +20,18 @@ const SimInputForm: React.FC<SimInputFormProps> = ({ eventId, onReload }) => {
         "no of VIP customers",
         "simulation speed (ms)",
     ];
+
+    useEffect(() => {
+        const fetchConfig = async () => {
+            try {
+                const response = await API.get(`/event/${eventId}/getConfig`);
+                setInputs(response.data);
+            } catch (error) {
+                console.error("Error fetching config:", error);
+            }
+        };
+        fetchConfig();
+    }, [eventId]);
 
     const handleChange = (index: number, value: string) => {
         const newInputs = [...inputs];

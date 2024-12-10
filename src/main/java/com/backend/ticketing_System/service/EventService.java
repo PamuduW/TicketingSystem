@@ -175,6 +175,8 @@ public class EventService {
             if (!Sim.startSimulation(event.getTotalTickets(), vendorReleaseRate, customerRetrievalRate, event.getMaxCapacity(), noOfVendors, noOfCustomers, noOfVIPCustomers, simSpeed, eventID)) {
                 throw new IOException("Simulation is already running.");
             }
+            event.setConfig(Arrays.asList(vendorReleaseRate, customerRetrievalRate, noOfVendors, noOfCustomers, noOfVIPCustomers, simSpeed));
+            eventRepo.save(event);
         } finally {
             lock.unlock();
         }
@@ -207,6 +209,9 @@ public class EventService {
         }
     }
 
+    public List<Integer> getConfig(String id) throws IOException {
+        return eventRepo.findById(id).orElseThrow(() -> new IOException("Event not found with id " + id)).getConfig();
+    }
 }
 
 

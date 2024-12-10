@@ -131,6 +131,15 @@ public class EventController {
             eventService.saveLogs(id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/event/{id}/getConfig")
+    public ResponseEntity<?> getConfig(@PathVariable String id) {
+        try {
+            return ResponseEntity.ok(eventService.getConfig(id));
+        } catch (IOException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
     }
