@@ -3,7 +3,6 @@ package com.backend.ticketing_System.sim;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.format.DateTimeFormatter;
 import java.util.Random;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -24,8 +23,6 @@ public class VendorSim implements Runnable {
     @Setter
     private static boolean messagePrinted = false;
     private static final ReentrantLock lock = new ReentrantLock(true);
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
 
     public VendorSim(int vendorReleaseRate, EventSim eventSim) {
         this.vendorName = "V" + vendorCount++;

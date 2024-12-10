@@ -198,8 +198,7 @@ public class EventService {
         lock.lock();
         try {
             if (eventRepo.findById(id).isPresent()) {
-                Sim simInstance = new Sim();
-                if (!simInstance.stopSimulation(true, id))
+                if (!Sim.stopSimulation(true))
                     throw new IOException("Simulation is not running.");
             } else throw new RuntimeException("Event not found with id " + id);
         } finally {

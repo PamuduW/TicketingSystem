@@ -1,6 +1,5 @@
 package com.backend.ticketing_System.sim;
 
-import java.time.format.DateTimeFormatter;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -11,8 +10,6 @@ public class EventSim {
     private final ReentrantLock lock = new ReentrantLock(true);
     private final Condition poolFull = lock.newCondition();
     private final Condition poolEmpty = lock.newCondition();
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
 
     public EventSim(int maxCapacity) {
         this.maxCapacity = maxCapacity;
