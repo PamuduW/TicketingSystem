@@ -53,10 +53,10 @@ const SimData: React.FC<SimDataProps> = ({ eventId }) => {
      */
     useEffect(() => {
         if (userData) {
-            const socket = new WebSocket(`ws://localhost:8080/ws/integers`);
-            // const socket = new WebSocket(
-            //     `wss://ticketing---system-32a1f2f59169.herokuapp.com/ws/integers`
-            // );
+            // const socket = new WebSocket(`ws://localhost:8080/ws/integers`);
+            const socket = new WebSocket(
+                `wss://ticketing---system-32a1f2f59169.herokuapp.com/ws/integers`
+            );
 
             socket.onopen = () =>
                 console.log("WebSocket connection established");
