@@ -112,7 +112,7 @@ const UpdateEvent: React.FC = () => {
                 {error && (
                     <p style={{ marginBottom: 10, color: "red" }}>{error}</p>
                 )}
-                <div style={{ paddingBottom: 20 }}>
+                <div style={{ marginBottom: 25 }}>
                     <TextField
                         required
                         label="Name"
@@ -121,7 +121,7 @@ const UpdateEvent: React.FC = () => {
                         onChange={handleChange}
                     />
                 </div>
-                <div style={{ paddingBottom: 20 }}>
+                <div style={{ marginBottom: 10 }}>
                     <TextField
                         required
                         label="Description"
@@ -130,24 +130,41 @@ const UpdateEvent: React.FC = () => {
                         onChange={handleChange}
                     />
                 </div>
-                <div style={{ paddingBottom: 20 }}>
+                <div style={{ marginBottom: 5 }}>
                     <TextField
-                        required
                         label="Total Tickets"
+                        required
                         type="number"
-                        name="totalTickets"
                         value={formData.totalTickets}
-                        onChange={handleChange}
+                        onChange={(e) => {
+                            const value = parseInt(e.target.value);
+                            if (value > 0) {
+                                setFormData((prevData) => ({
+                                    ...prevData,
+                                    totalTickets: value,
+                                    maxCapacity: Math.min(prevData.maxCapacity, value),
+                                }));
+                            }
+                        }}
+                        margin="normal"
                     />
                 </div>
-                <div style={{ paddingBottom: 20 }}>
+                <div style={{ marginBottom: 20 }}>
                     <TextField
-                        required
                         label="Max Capacity"
+                        required
                         type="number"
-                        name="maxCapacity"
                         value={formData.maxCapacity}
-                        onChange={handleChange}
+                        onChange={(e) => {
+                            const value = parseInt(e.target.value);
+                            if (value > 0 && value <= formData.totalTickets) {
+                                setFormData((prevData) => ({
+                                    ...prevData,
+                                    maxCapacity: value,
+                                }));
+                            }
+                        }}
+                        margin="normal"
                     />
                 </div>
                 <Button variant="outlined" type="submit">

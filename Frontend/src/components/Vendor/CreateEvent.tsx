@@ -4,6 +4,7 @@ import { UserContext } from "../Common/UserContext";
 import API from "../../axios";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import axios from "axios";
 
 /**
  * CreateEvent component for creating a new event.
@@ -22,6 +23,8 @@ const CreateEvent: React.FC = () => {
     const [totalTickets, setTotalTickets] = useState<number | "">("");
     // State to store the maximum capacity of the event
     const [maxCapacity, setMaxCapacity] = useState<number | "">("");
+    // State to store the error message
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     /**
      * Handles the form submission to create a new event.
@@ -43,8 +46,12 @@ const CreateEvent: React.FC = () => {
                     headers: { "Content-Type": "application/json" },
                 });
                 navigate("/dashboard");
-            } catch (error) {
-                console.error("Error creating event:", error);
+            } catch (error: unknown) {
+                if (axios.isAxiosError(error) && error.response?.status === 409) {
+                    setErrorMessage("Event with the same name already exists");
+                } else {
+                    console.error("Error creating event:", error);
+                }
             }
         }
     };
@@ -81,7 +88,15 @@ const CreateEvent: React.FC = () => {
                     required
                     type="number"
                     value={totalTickets}
-                    onChange={(e) => setTotalTickets(parseInt(e.target.value))}
+                    onChange={(e) => {
+                        const value = parseInt(e.target.value);
+                        if (value > 0) {
+                            setTotalTickets(value);
+                            if (typeof maxCapacity === "number" && maxCapacity > value) {
+                                setMaxCapacity(value);
+                            }
+                        }
+                    }}
                     fullWidth
                     margin="normal"
                 />
@@ -90,11 +105,21 @@ const CreateEvent: React.FC = () => {
                     required
                     type="number"
                     value={maxCapacity}
-                    onChange={(e) => setMaxCapacity(parseInt(e.target.value))}
+                    onChange={(e) => {
+                        const value = parseInt(e.target.value);
+                        if (value > 0 && typeof totalTickets === "number" && value <= totalTickets) {
+                            setMaxCapacity(value);
+                        }
+                    }}
                     fullWidth
                     margin="normal"
                 />
                 <div style={{ marginBottom: 20 }} />
+                {errorMessage && (
+                    <div style={{ marginBottom: 10, color: "red" }}>
+                        {errorMessage}
+                    </div>
+                )}
                 <Button variant="outlined" type="submit" fullWidth>
                     Create Event
                 </Button>

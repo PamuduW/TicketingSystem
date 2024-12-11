@@ -17,7 +17,7 @@ interface SimInputFormProps {
  */
 const SimInputForm: React.FC<SimInputFormProps> = ({ eventId, onReload }) => {
     // State to store the input values for the simulation configuration
-    const [inputs, setInputs] = useState<number[]>(Array(6).fill(0));
+    const [inputs, setInputs] = useState<number[]>(Array(6).fill(""));
     // State to store error messages
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     // Array of labels for the input fields
@@ -62,8 +62,8 @@ const SimInputForm: React.FC<SimInputFormProps> = ({ eventId, onReload }) => {
      */
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        if (inputs.some((input) => input < 0)) {
-            setErrorMessage("Cannot enter negative numbers");
+        if (inputs.some((input) => input <= 0)) {
+            setErrorMessage("All inputs must be greater than zero");
             return;
         }
         setErrorMessage(null);
@@ -74,6 +74,8 @@ const SimInputForm: React.FC<SimInputFormProps> = ({ eventId, onReload }) => {
             if (axios.isAxiosError(error) && error.response) {
                 if (error.response.status === 409) {
                     alert("The simulation is already running");
+                } if (error.response.status === 500) {
+                    alert("Something went wrong. Please try again.");
                 } else {
                     console.error("Error:", error);
                 }
@@ -109,6 +111,7 @@ const SimInputForm: React.FC<SimInputFormProps> = ({ eventId, onReload }) => {
                 <div key={index} style={{ marginBottom: 20 }}>
                     <TextField
                         label={label}
+                        required
                         variant="outlined"
                         type="number"
                         value={inputs[index]}
