@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "./UserContext";
 import API from "../../axios";
 import "./Common.css";
-import Button from "@mui/material/Button";
+import { Button, Drawer } from "@mui/material";
+import CustomerInventory from "./CustomerInventory";
 
 interface Event {
     eventId: string;
@@ -19,11 +20,23 @@ interface Event {
     vendors: string[];
 }
 
+/**
+ * Dashboard component for displaying user-specific information and events.
+ * Allows vendors to create events and customers to view their inventory.
+ */
 const Dashboard: React.FC = () => {
+    // Get user data from the UserContext
     const { userData } = useContext(UserContext) || {};
+    // State to store the list of events
     const [events, setEvents] = useState<Event[]>([]);
+    // State to manage the drawer open/close status
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    // Hook to navigate to different routes
     const navigate = useNavigate();
 
+    /**
+     * Fetches events data when the component mounts or updates.
+     */
     useEffect(() => {
         const fetchEvents = async () => {
             if (userData) {
@@ -43,11 +56,37 @@ const Dashboard: React.FC = () => {
         fetchEvents();
     }, [userData]);
 
+    /**
+     * Handles the event card click to navigate to the event details page.
+     * @param eventId - The ID of the event to navigate to.
+     */
     const handleEventClick = (eventId: string) => navigate(`/event/${eventId}`);
+
+    /**
+     * Handles the click to navigate to the create event page.
+     */
     const handleCreateEventClick = () => navigate("/createEvent");
+
+    /**
+     * Handles the logout action.
+     */
     const handleLogout = () => {
         navigate("/");
         window.location.reload();
+    };
+
+    /**
+     * Opens the drawer to view customer inventory.
+     */
+    const handleOpenDrawer = () => {
+        setDrawerOpen(true);
+    };
+
+    /**
+     * Closes the drawer.
+     */
+    const handleCloseDrawer = () => {
+        setDrawerOpen(false);
     };
 
     return (
@@ -74,6 +113,16 @@ const Dashboard: React.FC = () => {
                                 onClick={handleCreateEventClick}
                             >
                                 Create an Event
+                            </Button>
+                        </div>
+                    )}
+                    {!userData.isVendor && (
+                        <div className="user-details">
+                            <Button
+                                variant="outlined"
+                                onClick={handleOpenDrawer}
+                            >
+                                View Customer Inventory
                             </Button>
                         </div>
                     )}
@@ -112,6 +161,16 @@ const Dashboard: React.FC = () => {
             ) : (
                 <p>Loading...</p>
             )}
+            <Drawer
+                anchor="right"
+                open={drawerOpen}
+                onClose={handleCloseDrawer}
+                sx={{ "& .MuiDrawer-paper": { backgroundColor: "#d4d4d4" } }}
+            >
+                <div style={{ width: 300, padding: 20 }}>
+                    <CustomerInventory />
+                </div>
+            </Drawer>
         </div>
     );
 };

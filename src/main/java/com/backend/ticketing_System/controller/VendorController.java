@@ -11,21 +11,41 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * REST controller for managing vendors.
+ */
 @RestController
 @RequestMapping("/api")
 public class VendorController {
     private final VendorService vendorService;
 
+    /**
+     * Constructor for VendorController.
+     *
+     * @param vendorService the service to manage vendors.
+     */
     @Autowired
     public VendorController(VendorService vendorService) {
         this.vendorService = vendorService;
     }
 
+    /**
+     * Get all vendors.
+     *
+     * @return a ResponseEntity containing a list of all vendors.
+     */
     @GetMapping("/vendors")
     public ResponseEntity<List<Vendor>> getAllVendors() {
         return ResponseEntity.ok(vendorService.getAllVendors());
     }
 
+    /**
+     * Get a vendor by username and password.
+     *
+     * @param username the username of the vendor.
+     * @param pass the password of the vendor.
+     * @return the vendor if found and password matches, otherwise appropriate HTTP status.
+     */
     @GetMapping("/vendor")
     public ResponseEntity<Vendor> getVendorByUsername(@RequestParam String username, @RequestParam String pass) {
         Optional<Vendor> optionalVendor = vendorService.getVendorByUsername(username);
@@ -37,6 +57,12 @@ public class VendorController {
         return ResponseEntity.notFound().build();
     }
 
+    /**
+     * Create a new vendor.
+     *
+     * @param vendor the vendor to create.
+     * @return the created vendor or an error message if creation fails.
+     */
     @PostMapping("/vendor")
     public ResponseEntity<?> createVendor(@RequestBody Vendor vendor) {
         try {
@@ -46,6 +72,12 @@ public class VendorController {
         }
     }
 
+    /**
+     * Get a vendor by ID.
+     *
+     * @param id the ID of the vendor to retrieve.
+     * @return the vendor if found, otherwise appropriate HTTP status.
+     */
     @GetMapping("/vendor/{id}")
     public ResponseEntity<?> getVendorById(@PathVariable String id) {
         Optional<Vendor> optionalVendor = vendorService.getVendorById(id);
@@ -54,6 +86,13 @@ public class VendorController {
         return ResponseEntity.notFound().build();
     }
 
+    /**
+     * Update an existing vendor.
+     *
+     * @param id the ID of the vendor to update.
+     * @param vendorDetails the new details of the vendor.
+     * @return the updated vendor or an error message if update fails.
+     */
     @PutMapping("/vendor/{id}")
     public ResponseEntity<?> updateVendor(@PathVariable String id, @RequestBody Vendor vendorDetails) {
         try {
@@ -64,6 +103,12 @@ public class VendorController {
         }
     }
 
+    /**
+     * Delete a vendor.
+     *
+     * @param id the ID of the vendor to delete.
+     * @return no content if deletion is successful, otherwise an error message.
+     */
     @DeleteMapping("/vendor/{id}")
     public ResponseEntity<?> deleteVendor(@PathVariable String id) {
         try {

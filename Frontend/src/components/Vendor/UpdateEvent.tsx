@@ -14,19 +14,32 @@ interface Event {
     issuedTickets: number;
 }
 
+/**
+ * UpdateEvent component for updating the details of an existing event.
+ * Fetches the current event details and allows the user to update them.
+ */
 const UpdateEvent: React.FC = () => {
+    // Extract the eventId parameter from the URL
     const { eventId } = useParams<{ eventId: string }>();
+    // Get the user data from the UserContext
     const { userData } = useContext(UserContext) || {};
+    // Hook to navigate programmatically
     const navigate = useNavigate();
+    // State to store the event details
     const [event, setEvent] = useState<Event | null>(null);
+    // State to store the form data for updating the event
     const [formData, setFormData] = useState({
         name: "",
         desc: "",
         totalTickets: 0,
         maxCapacity: 0,
     });
+    // State to store any error messages
     const [error, setError] = useState<string | null>(null);
 
+    /**
+     * Fetches the event details for the current event ID.
+     */
     useEffect(() => {
         const fetchEvent = async () => {
             if (userData) {
@@ -47,6 +60,10 @@ const UpdateEvent: React.FC = () => {
         fetchEvent();
     }, [eventId, userData]);
 
+    /**
+     * Handles changes to the form input fields.
+     * @param e - The change event for the input field.
+     */
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({
@@ -55,6 +72,10 @@ const UpdateEvent: React.FC = () => {
         }));
     };
 
+    /**
+     * Handles the form submission to update the event details.
+     * @param e - The form submission event.
+     */
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (formData.totalTickets < 0 || formData.maxCapacity < 0) {

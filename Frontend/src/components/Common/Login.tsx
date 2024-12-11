@@ -6,14 +6,28 @@ import { TextField, Button, Switch } from "@mui/material";
 import { UserContext } from "./UserContext";
 import "./Common.css";
 
+/**
+ * Login component for user authentication.
+ * Allows users to log in as either a vendor or a customer.
+ */
 const Login: React.FC = () => {
+    // State to store the username input
     const [username, setUsername] = useState("");
+    // State to store the password input
     const [password, setPassword] = useState("");
+    // State to toggle between vendor and customer roles
     const [isVendor, setIsVendor] = useState(true);
+    // State to store error messages
     const [errorMessage, setErrorMessage] = useState("");
+    // Hook to navigate to different routes
     const navigate = useNavigate();
+    // Get the user context
     const userContext = useContext(UserContext);
 
+    /**
+     * Handles the form submission for login.
+     * @param event - The form submission event.
+     */
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         const params = { username, pass: password };

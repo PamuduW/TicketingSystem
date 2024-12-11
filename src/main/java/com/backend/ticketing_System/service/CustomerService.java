@@ -10,24 +10,50 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * Service class for managing customers.
+ */
 @Service
 public class CustomerService {
     private final CustomerRepository customerRepo;
     private final ReentrantLock lock = new ReentrantLock(true);
 
+    /**
+     * Constructs a new CustomerService with the given CustomerRepository.
+     *
+     * @param customerRepo the repository for customer data.
+     */
     @Autowired
     public CustomerService(CustomerRepository customerRepo) {
         this.customerRepo = customerRepo;
     }
 
+    /**
+     * Retrieves all customers.
+     *
+     * @return a list of all customers.
+     */
     public List<Customer> getAllCustomers() {
         return customerRepo.findAll();
     }
 
+    /**
+     * Retrieves a customer by their username.
+     *
+     * @param customerUsername the username of the customer.
+     * @return an Optional containing the found customer, or empty if no customer was found.
+     */
     public Optional<Customer> getCustomerByUsername(String customerUsername) {
         return customerRepo.findByUsername(customerUsername);
     }
 
+    /**
+     * Creates a new customer.
+     *
+     * @param customer the customer to create.
+     * @return the created customer.
+     * @throws IOException if a customer with the same username already exists.
+     */
     public Customer createCustomer(Customer customer) throws IOException {
         lock.lock();
         try {
@@ -39,6 +65,14 @@ public class CustomerService {
         }
     }
 
+    /**
+     * Updates an existing customer.
+     *
+     * @param customerId the ID of the customer to update.
+     * @param customerDetails the new details for the customer.
+     * @return the updated customer.
+     * @throws IOException if the customer is not found.
+     */
     public Customer updateCustomer(String customerId, Customer customerDetails) throws IOException {
         lock.lock();
         try {
@@ -54,6 +88,12 @@ public class CustomerService {
         }
     }
 
+    /**
+     * Deletes a customer.
+     *
+     * @param customerId the ID of the customer to delete.
+     * @throws IOException if the customer is not found.
+     */
     public void deleteCustomer(String customerId) throws IOException {
         lock.lock();
         try {

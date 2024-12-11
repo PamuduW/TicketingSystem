@@ -5,13 +5,26 @@ import { TextField, Button, Switch } from "@mui/material";
 import "./Common.css";
 import axios from "axios";
 
+/**
+ * Register component for user registration.
+ * Allows users to register as either a vendor or a customer.
+ */
 const Register: React.FC = () => {
+    // State to store the username input
     const [username, setUsername] = useState("");
+    // State to store the password input
     const [password, setPassword] = useState("");
+    // State to toggle between vendor and customer roles
     const [isVendor, setIsVendor] = useState(true);
+    // State to store error messages
     const [errorMessage, setErrorMessage] = useState("");
+    // Hook to navigate to different routes
     const navigate = useNavigate();
 
+    /**
+     * Handles the form submission for registration.
+     * @param event - The form submission event.
+     */
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         const data = { username, pass: password };

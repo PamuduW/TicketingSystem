@@ -1,6 +1,10 @@
 import java.util.Random;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * The Customer class represents a customer that retrieves tickets from a ticket pool.
+ * Implements the Runnable interface to allow execution in a separate thread.
+ */
 public class Customer implements Runnable {
     private String customerName;
     private final int customerRetrievalRate;
@@ -12,6 +16,14 @@ public class Customer implements Runnable {
     private static boolean finalTransaction = false;
     private static final ReentrantLock lock = new ReentrantLock();
 
+    /**
+     * Constructs a Customer with the specified retrieval rate, ticket pool, console, and simulation speed.
+     *
+     * @param maxTicketsToRetrieve the maximum number of tickets the customer can retrieve at a time
+     * @param ticketPool the ticket pool from which the customer retrieves tickets
+     * @param console the console for logging output
+     * @param simulationSpeed the speed of the simulation in milliseconds
+     */
     public Customer(int maxTicketsToRetrieve, TicketPool ticketPool, Console console, int simulationSpeed) {
         this.customerName = "C" + customerCount++;
         this.customerRetrievalRate = maxTicketsToRetrieve;
@@ -20,22 +32,46 @@ public class Customer implements Runnable {
         this.simulationSpeed = simulationSpeed;
     }
 
+    /**
+     * Sets the customer's name.
+     *
+     * @param customerName the name of the customer
+     */
     protected void setCustomerName(String customerName) {
         this.customerName = customerName;
     }
 
+    /**
+     * Sets the customer count.
+     *
+     * @param customerCount the number of customers
+     */
     public static void setCustomerCount(int customerCount) {
         Customer.customerCount = customerCount;
     }
 
+    /**
+     * Sets the final transaction flag.
+     *
+     * @param finalTransaction true if it is the final transaction, false otherwise
+     */
     public static void setFinalTransaction(boolean finalTransaction) {
         Customer.finalTransaction = finalTransaction;
     }
 
+    /**
+     * Sets the message printed flag.
+     *
+     * @param messagePrinted true if the message has been printed, false otherwise
+     */
     public static void setMessagePrinted(boolean messagePrinted) {
         Customer.messagePrinted = messagePrinted;
     }
 
+    /**
+     * The run method for the Customer thread. Retrieves tickets from the ticket pool at random intervals
+     * until the final transaction is completed.
+     */
     @Override
     public void run() {
         Random random = new Random();

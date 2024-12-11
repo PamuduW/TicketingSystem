@@ -16,17 +16,29 @@ interface Vendor {
     username: string;
 }
 
+/**
+ * AddVendors component for managing and updating the vendors of an event.
+ * Fetches event and vendor details, and allows the user to update the vendors.
+ */
 const AddVendors: React.FC = () => {
+    // Extract the eventId parameter from the URL
     const { eventId } = useParams<{ eventId: string }>();
+    // Get the user data from the UserContext
     const userContext = useContext(UserContext);
+    // Hook to navigate programmatically
     const navigate = useNavigate();
+    // State to store the event details
     const [event, setEvent] = useState<Event | null>(null);
-    const [vendorDetails, setVendorDetails] = useState<{
-        [key: string]: Vendor;
-    }>({});
+    // State to store the details of all vendors
+    const [vendorDetails, setVendorDetails] = useState<{ [key: string]: Vendor }>({});
+    // State to store the list of all vendors
     const [allVendors, setAllVendors] = useState<Vendor[]>([]);
+    // State to store the list of selected vendors
     const [selectedVendors, setSelectedVendors] = useState<string[]>([]);
 
+    /**
+     * Fetches the event details for the current event ID.
+     */
     useEffect(() => {
         const fetchEvent = async () => {
             if (userContext?.userData) {
@@ -42,6 +54,9 @@ const AddVendors: React.FC = () => {
         fetchEvent();
     }, [eventId, userContext]);
 
+    /**
+     * Fetches the details of each vendor in the event.
+     */
     useEffect(() => {
         if (event) {
             event.vendors.forEach((vendorId) => {
@@ -52,6 +67,10 @@ const AddVendors: React.FC = () => {
         }
     }, [event, vendorDetails]);
 
+    /**
+     * Fetches the details of a specific vendor by vendor ID.
+     * @param vendorId - The ID of the vendor to fetch details for.
+     */
     const fetchVendorDetails = async (vendorId: string) => {
         try {
             const response = await API.get(`/vendor/${vendorId}`);
@@ -64,6 +83,9 @@ const AddVendors: React.FC = () => {
         }
     };
 
+    /**
+     * Fetches the list of all vendors.
+     */
     useEffect(() => {
         const fetchAllVendors = async () => {
             try {
@@ -76,6 +98,10 @@ const AddVendors: React.FC = () => {
         fetchAllVendors();
     }, []);
 
+    /**
+     * Handles the change event for the vendor selection checkboxes.
+     * @param vendorId - The ID of the vendor being selected or deselected.
+     */
     const handleCheckboxChange = (vendorId: string) => {
         setSelectedVendors((prevSelected) =>
             prevSelected.includes(vendorId)
@@ -84,6 +110,9 @@ const AddVendors: React.FC = () => {
         );
     };
 
+    /**
+     * Handles the submission of the updated vendor list.
+     */
     const handleChangeVendors = async () => {
         try {
             await API.put(`/event/${eventId}/vendors`, selectedVendors);
@@ -118,14 +147,8 @@ const AddVendors: React.FC = () => {
                                 <label>
                                     <input
                                         type="checkbox"
-                                        checked={selectedVendors.includes(
-                                            vendor.vendorId
-                                        )}
-                                        onChange={() =>
-                                            handleCheckboxChange(
-                                                vendor.vendorId
-                                            )
-                                        }
+                                        checked={selectedVendors.includes(vendor.vendorId)}
+                                        onChange={() => handleCheckboxChange(vendor.vendorId)}
                                     />
                                     {vendor.username}
                                 </label>

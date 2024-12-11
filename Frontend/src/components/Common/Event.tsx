@@ -25,18 +25,32 @@ interface Vendor {
     username: string;
 }
 
+/**
+ * Component for displaying event details and providing options for vendors and customers.
+ * Fetches event and vendor details from the backend and displays them.
+ */
 const Event: React.FC = () => {
+    // Get the eventId from the URL parameters
     const { eventId } = useParams<{ eventId: string }>();
+    // Get the user data from the UserContext
     const { userData } = useContext(UserContext) || {};
+    // Hook to navigate to different routes
     const navigate = useNavigate();
+    // State to store the event details
     const [event, setEvent] = useState<Event | null>(null);
-    const [vendorDetails, setVendorDetails] = useState<{
-        [key: string]: Vendor;
-    }>({});
+    // State to store vendor details
+    const [vendorDetails, setVendorDetails] = useState<{ [key: string]: Vendor }>({});
+    // State to manage the drawer open/close status for changing tickets
     const [drawerOpen, setDrawerOpen] = useState(false);
+    // State to manage the drawer open/close status for adding vendors
     const [vendorDrawerOpen, setVendorDrawerOpen] = useState(false);
+    // State to manage the drawer open/close status for updating the event
     const [updateDrawerOpen, setUpdateDrawerOpen] = useState(false);
 
+    /**
+     * Fetches vendor details for a given vendor ID.
+     * @param vendorId - The ID of the vendor to fetch.
+     */
     const fetchVendorDetails = async (vendorId: string) => {
         try {
             const { data } = await API.get(`/vendor/${vendorId}`, {
@@ -48,6 +62,9 @@ const Event: React.FC = () => {
         }
     };
 
+    /**
+     * Fetches event details for the current event ID.
+     */
     const fetchEvent = async () => {
         if (userData) {
             try {
@@ -61,26 +78,48 @@ const Event: React.FC = () => {
         }
     };
 
+    // Fetch event details when the component mounts or updates
     useEffect(() => {
         fetchEvent();
     }, [eventId, userData]);
 
+    // Fetch vendor details for each vendor in the event
     useEffect(() => {
         event?.vendors.forEach((vendorId) => {
             if (!vendorDetails[vendorId]) fetchVendorDetails(vendorId);
         });
     }, [event, vendorDetails]);
 
+    // Fetch event details when any drawer is closed
     useEffect(() => {
         if (!drawerOpen || !vendorDrawerOpen || !updateDrawerOpen) fetchEvent();
     }, [drawerOpen, vendorDrawerOpen, updateDrawerOpen]);
 
     if (!event) return <p>Loading...</p>;
 
+    /**
+     * Handles the click to navigate to the event simulation page.
+     */
     const handleSimulateEvent = () => navigate(`/simulation/${eventId}`);
+
+    /**
+     * Opens the drawer to change tickets.
+     */
     const handleChangeTickets = () => setDrawerOpen(true);
+
+    /**
+     * Opens the drawer to add vendors.
+     */
     const handleAddVendors = () => setVendorDrawerOpen(true);
+
+    /**
+     * Opens the drawer to update the event.
+     */
     const handleUpdateEvent = () => setUpdateDrawerOpen(true);
+
+    /**
+     * Navigates back to the dashboard.
+     */
     const handleBackToDashboard = () => navigate("/dashboard");
 
     return (

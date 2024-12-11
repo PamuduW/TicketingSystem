@@ -16,12 +16,24 @@ interface Event {
     maxCapacity: number;
 }
 
+/**
+ * SimData component for displaying simulation data of an event.
+ * Fetches event details and listens to WebSocket for real-time ticket updates.
+ * @param eventId - The ID of the event to fetch and display data for.
+ */
 const SimData: React.FC<SimDataProps> = ({ eventId }) => {
+    // Get the user data from the UserContext
     const { userData } = useContext(UserContext) || {};
+    // State to store the event details
     const [event, setEvent] = useState<Event | null>(null);
+    // State to store the current tickets data
     const [currentTickets, setCurrentTickets] = useState<number[]>([]);
+    // State to store all sold tickets data
     const [allSoldTickets, setAllSoldTickets] = useState<number[]>([]);
 
+    /**
+     * Fetches event details for the current event ID.
+     */
     useEffect(() => {
         const fetchEvent = async () => {
             if (userData) {
@@ -36,12 +48,15 @@ const SimData: React.FC<SimDataProps> = ({ eventId }) => {
         fetchEvent();
     }, [eventId, userData]);
 
+    /**
+     * Establishes a WebSocket connection to receive real-time ticket updates.
+     */
     useEffect(() => {
         if (userData) {
-            // const socket = new WebSocket(`ws://localhost:8080/ws/integers`);
-            const socket = new WebSocket(
-                `wss://ticketing---system-32a1f2f59169.herokuapp.com/ws/integers`
-            );
+            const socket = new WebSocket(`ws://localhost:8080/ws/integers`);
+            // const socket = new WebSocket(
+            //     `wss://ticketing---system-32a1f2f59169.herokuapp.com/ws/integers`
+            // );
 
             socket.onopen = () =>
                 console.log("WebSocket connection established");
@@ -61,6 +76,9 @@ const SimData: React.FC<SimDataProps> = ({ eventId }) => {
         }
     }, [userData]);
 
+    /**
+     * Saves logs when all tickets are sold.
+     */
     useEffect(() => {
         if (
             allSoldTickets.reduce((acc, ticket) => acc + ticket, 0) ===
@@ -89,6 +107,9 @@ const SimData: React.FC<SimDataProps> = ({ eventId }) => {
         100;
     const buffer = (allAddedTickets / event.totalTickets) * 100;
 
+    /**
+     * Returns properties for the status chip based on the ticket sales.
+     */
     const getChipProps = () => {
         const totalSold = allSoldTickets.reduce(
             (acc, ticket) => acc + ticket,

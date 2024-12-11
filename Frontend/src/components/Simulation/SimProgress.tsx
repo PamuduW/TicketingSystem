@@ -2,18 +2,30 @@ import React, { useEffect, useState, useContext } from "react";
 import { UserContext } from "../Common/UserContext";
 import { LineChart } from "@mui/x-charts/LineChart";
 
+/**
+ * SimProgress component for displaying the progress of ticket sales in a simulation.
+ * Connects to a WebSocket server to receive real-time updates on ticket sales.
+ */
 const SimProgress: React.FC = () => {
+    // Get the user data from the UserContext
     const { userData } = useContext(UserContext) || {};
+    // State to store the current tickets data
     const [currentTickets, setCurrentTickets] = useState<number[]>([]);
+    // State to store all sold tickets data
     const [allSoldTickets, setAllSoldTickets] = useState<number[]>([]);
+    // State to store the labels for the x-axis of the chart
     const [xLabels, setXLabels] = useState<string[]>([]);
 
+    /**
+     * Establishes a WebSocket connection to receive real-time ticket updates.
+     * Closes the WebSocket connection when the component is unmounted.
+     */
     useEffect(() => {
         if (userData) {
-            // const socket = new WebSocket(`ws://localhost:8080/ws/integers`);
-            const socket = new WebSocket(
-                `wss://ticketing---system-32a1f2f59169.herokuapp.com/ws/integers`
-            );
+            const socket = new WebSocket(`ws://localhost:8080/ws/integers`);
+            // const socket = new WebSocket(
+            //     `wss://ticketing---system-32a1f2f59169.herokuapp.com/ws/integers`
+            // );
 
             socket.onopen = () =>
                 console.log("WebSocket connection established");
@@ -34,6 +46,7 @@ const SimProgress: React.FC = () => {
         }
     }, [userData]);
 
+    // Calculate the total number of tickets added (current + sold) for each update
     const allAddedTickets = currentTickets.map(
         (ticket, index) => ticket + (allSoldTickets[index] || 0)
     );

@@ -9,6 +9,10 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * The Main class is the entry point for the ticketing simulation application.
+ * It handles configuration, starting, and stopping the simulation.
+ */
 public class Main {
     private static ThreadPoolExecutor threadPoolExecutor;
     private static final ReentrantLock lock = new ReentrantLock();
@@ -18,6 +22,11 @@ public class Main {
     public static Console console;
     public static final Scanner scanner = new Scanner(System.in);
 
+    /**
+     * The main method initializes the application, loads the configuration, and displays the main menu.
+     *
+     * @param args command-line arguments (not used)
+     */
     public static void main(String[] args) {
         System.out.println("\n--- Welcome to the ticketing simulation ---\n\nSearching for a Config file...");
         File configFile = new File("Logs/config.json");
@@ -46,7 +55,6 @@ public class Main {
 
         System.out.printf("\n--- Current Config ---\nTotal Number of Tickets: %d\nMaximum Ticket Release Rate: %d\nMaximum Customer Retrieval Rate: %d\nMaximum Ticket Capacity: %d\n",
                 totalTickets, vendorReleaseRate, customerRetrievalRate, maxTicketCapacity);
-        console = new Console();
 
         while (true) {
             System.out.print("""
@@ -74,6 +82,9 @@ public class Main {
         }
     }
 
+    /**
+     * Prompts the user to set the configuration parameters and saves them to a file.
+     */
     private static void setConfig() {
         while (true) {
             System.out.println("\n--- Setting the Config File ---");
@@ -95,6 +106,12 @@ public class Main {
         }
     }
 
+    /**
+     * Prompts the user for input and validates it.
+     *
+     * @param message the prompt message
+     * @return the validated input
+     */
     private static int getInput(String message) {
         while (true) {
             try {
@@ -108,11 +125,15 @@ public class Main {
         }
     }
 
+    /**
+     * Starts the ticketing simulation by initializing vendors and customers and submitting them to the thread pool.
+     */
     private static void startSimulation() {
         if (isRunning) {
             System.out.println("The simulation is already running.");
             return;
         }
+        console = new Console();
         System.out.println("\n--- Simulation Configuration ---");
         int noOfVendors = getInput("Enter the Number of Vendors simulated: ");
         int noOfVIPCustomers = getInput("Enter the Number of VIP Customers simulated: ");
@@ -156,6 +177,11 @@ public class Main {
         System.out.println("Simulation started.");
     }
 
+    /**
+     * Stops the ticketing simulation and shuts down the thread pool.
+     *
+     * @param message true if a stop message should be printed, false otherwise
+     */
     public static void stopSimulation(boolean message) {
         lock.lock();
         try {

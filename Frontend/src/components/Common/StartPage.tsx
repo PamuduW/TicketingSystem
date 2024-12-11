@@ -10,6 +10,10 @@ import AddVendors from "../Vendor/AddVendors";
 import CreateEvent from "../Vendor/CreateEvent";
 import UpdateEvent from "../Vendor/UpdateEvent";
 
+/**
+ * StartPage component that sets up the main application routes.
+ * Provides user context and defines routes for various components.
+ */
 const StartPage: React.FC = () => (
     <UserProvider>
         <Router>
@@ -19,10 +23,7 @@ const StartPage: React.FC = () => (
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/event/:eventId" element={<Event />} />
                 <Route path="/simulation/:eventId" element={<Simulation />} />
-                <Route
-                    path="/changeTickets/:eventId"
-                    element={<ChangeTickets />}
-                />
+                <Route path="/changeTickets/:eventId" element={<ChangeTickets />} />
                 <Route path="/addVendors/:eventId" element={<AddVendors />} />
                 <Route path="/createEvent" element={<CreateEvent />} />
                 <Route path="/updateEvent/:eventId" element={<UpdateEvent />} />

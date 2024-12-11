@@ -13,26 +13,53 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * Service class for managing events.
+ */
 @Service
 public class EventService {
     private final EventRepository eventRepo;
     private final VendorRepository vendorRepo;
     private final ReentrantLock lock = new ReentrantLock(true);
 
+    /**
+     * Constructor for EventService.
+     *
+     * @param eventRepo the event repository
+     * @param vendorRepo the vendor repository
+     */
     @Autowired
     public EventService(EventRepository eventRepo, VendorRepository vendorRepo) {
         this.eventRepo = eventRepo;
         this.vendorRepo = vendorRepo;
     }
 
+    /**
+     * Get all events.
+     *
+     * @return a list of all events
+     */
     public List<Event> getAllEvents() {
         return eventRepo.findAll();
     }
 
+    /**
+     * Get an event by its ID.
+     *
+     * @param eventId the event ID
+     * @return an optional containing the event if found, otherwise empty
+     */
     public Optional<Event> getEventById(String eventId) {
         return eventRepo.findById(eventId);
     }
 
+    /**
+     * Create a new event.
+     *
+     * @param event the event to create
+     * @return the created event
+     * @throws IOException if an event with the same name already exists
+     */
     public Event createEvent(Event event) throws IOException {
         lock.lock();
         try {
@@ -45,10 +72,22 @@ public class EventService {
         }
     }
 
+    /**
+     * Get all events by owner ID.
+     *
+     * @param ownerId the owner ID
+     * @return a list of events owned by the specified owner
+     */
     public List<Event> getAllByOwnerId(String ownerId) {
         return eventRepo.findAllByOwnerId(ownerId);
     }
 
+    /**
+     * Get all events by vendor ID.
+     *
+     * @param vendorId the vendor ID
+     * @return a list of events associated with the specified vendor
+     */
     public List<Event> getAllByVendorId(String vendorId) {
         List<Event> list = new ArrayList<>();
         for (Event event : eventRepo.findAll()) {
@@ -59,6 +98,14 @@ public class EventService {
         return list;
     }
 
+    /**
+     * Update an event.
+     *
+     * @param eventId the event ID
+     * @param eventDetails the updated event details
+     * @return the updated event
+     * @throws IOException if the event is not found
+     */
     public Event updateEvent(String eventId, Event eventDetails) throws IOException {
         lock.lock();
         try {
@@ -76,6 +123,14 @@ public class EventService {
         }
     }
 
+    /**
+     * Update the vendors of an event.
+     *
+     * @param eventId the event ID
+     * @param vendors the list of vendor IDs
+     * @return the updated event
+     * @throws IOException if the event is not found
+     */
     public Event updateEventVendors(String eventId, List<String> vendors) throws IOException {
         lock.lock();
         try {
@@ -94,6 +149,14 @@ public class EventService {
         }
     }
 
+    /**
+     * Add tickets to an event.
+     *
+     * @param eventId the event ID
+     * @param ticketCount the number of tickets to add
+     * @return the updated event
+     * @throws IOException if the event is not found or if the ticket limits are exceeded
+     */
     public Event addTickets(String eventId, int ticketCount) throws IOException {
         lock.lock();
         try {
@@ -121,6 +184,14 @@ public class EventService {
         }
     }
 
+    /**
+     * Buy tickets for an event.
+     *
+     * @param eventId the event ID
+     * @param ticketCount the number of tickets to buy
+     * @param customerId the customer ID
+     * @throws IOException if the event is not found or if there are not enough tickets available
+     */
     public void buyTickets(String eventId, int ticketCount, String customerId) throws IOException {
         lock.lock();
         try {
@@ -143,6 +214,12 @@ public class EventService {
         }
     }
 
+    /**
+     * Get tickets by customer ID.
+     *
+     * @param customerId the customer ID
+     * @return a dictionary of events and their associated tickets for the specified customer
+     */
     public Dictionary<String, List<String>> getTicketsByCustomerId(String customerId) {
         Dictionary<String, List<String>> dic = new Hashtable<>();
         for (Event event : eventRepo.findAll()) {
@@ -152,11 +229,18 @@ public class EventService {
                     list.add(ticket.getTicketId());
                 }
             }
+            if (list.isEmpty()) continue;
             dic.put(event.getEventId(), list);
         }
         return dic;
     }
 
+    /**
+     * Delete an event.
+     *
+     * @param eventId the event ID
+     * @throws IOException if the event is not found
+     */
     public void deleteEvent(String eventId) throws IOException {
         lock.lock();
         try {
@@ -168,6 +252,18 @@ public class EventService {
         }
     }
 
+    /**
+     * Start a simulation for an event.
+     *
+     * @param eventID the event ID
+     * @param vendorReleaseRate the vendor release rate
+     * @param customerRetrievalRate the customer retrieval rate
+     * @param noOfVendors the number of vendors
+     * @param noOfCustomers the number of customers
+     * @param noOfVIPCustomers the number of VIP customers
+     * @param simSpeed the simulation speed
+     * @throws IOException if the event is not found or if the simulation is already running
+     */
     public void startSimulation(String eventID, int vendorReleaseRate, int customerRetrievalRate, int noOfVendors, int noOfCustomers, int noOfVIPCustomers, int simSpeed) throws IOException {
         lock.lock();
         try {
@@ -182,6 +278,12 @@ public class EventService {
         }
     }
 
+    /**
+     * Stop a simulation for an event.
+     *
+     * @param id the event ID
+     * @throws IOException if the event is not found or if the simulation is not running
+     */
     public void stopSimulation(String id) throws IOException {
         lock.lock();
         try {
@@ -196,6 +298,11 @@ public class EventService {
         }
     }
 
+    /**
+     * Save logs for an event.
+     *
+     * @param id the event ID
+     */
     public void saveLogs(String id) {
         lock.lock();
         try {
@@ -209,13 +316,14 @@ public class EventService {
         }
     }
 
+    /**
+     * Get the configuration for an event.
+     *
+     * @param id the event ID
+     * @return the event configuration
+     * @throws IOException if the event is not found
+     */
     public List<Integer> getConfig(String id) throws IOException {
         return eventRepo.findById(id).orElseThrow(() -> new IOException("Event not found with id " + id)).getConfig();
     }
 }
-
-
-/// //////////////////////////////////////////// add get all tickets for customer id  //////////////////////////////////////////////////////////////
-/// //////////////////////////////////////////// make only one instance of vendor acc log in can happen at any time ///////////////////////////////////////////////////////
-/// /////////////////////////////////////////try to add image functions  ////////////////////////////////////////////////////////////////////////////
-/// ////////////////////////////////////////// try to make sims web socket independent to the session ///////////////////////////////////////////////

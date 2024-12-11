@@ -3,6 +3,9 @@ package com.backend.ticketing_System.sim;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * Simulates an event in the ticketing system.
+ */
 public class EventSim {
     private int currentTickets = 0;
     private int allSoldTickets = 0;
@@ -11,10 +14,20 @@ public class EventSim {
     private final Condition poolFull = lock.newCondition();
     private final Condition poolEmpty = lock.newCondition();
 
+    /**
+     * Constructs a new EventSim with the specified maximum capacity.
+     *
+     * @param maxCapacity the maximum capacity of tickets.
+     */
     public EventSim(int maxCapacity) {
         this.maxCapacity = maxCapacity;
     }
 
+    /**
+     * Gets the current number of tickets.
+     *
+     * @return the current number of tickets.
+     */
     public int getTicketCount() {
         lock.lock();
         try {
@@ -24,6 +37,12 @@ public class EventSim {
         }
     }
 
+    /**
+     * Adds tickets to the event.
+     *
+     * @param vendorName the name of the vendor adding tickets.
+     * @param ticketsToAdd the number of tickets to add.
+     */
     public void addTickets(String vendorName, int ticketsToAdd) {
         lock.lock();
         try {
@@ -44,6 +63,13 @@ public class EventSim {
         }
     }
 
+    /**
+     * Retrieves tickets from the event.
+     *
+     * @param customerName the name of the customer retrieving tickets.
+     * @param ticketsToRetrieve the number of tickets to retrieve.
+     * @param finalTransaction whether this is the final transaction.
+     */
     public void retrieveTickets(String customerName, int ticketsToRetrieve, boolean finalTransaction) {
         lock.lock();
         try {

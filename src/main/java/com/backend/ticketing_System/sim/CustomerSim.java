@@ -5,6 +5,9 @@ import lombok.Setter;
 import java.util.Random;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * Simulates customer behavior in the ticketing system.
+ */
 public class CustomerSim implements Runnable {
     @Setter
     private String customerName;
@@ -20,12 +23,22 @@ public class CustomerSim implements Runnable {
     private static boolean finalTransaction = false;
     private static final ReentrantLock lock = new ReentrantLock(true);
 
+    /**
+     * Constructs a new CustomerSim with the specified maximum tickets to retrieve and event simulation.
+     *
+     * @param maxTicketsToRetrieve the maximum number of tickets a customer can retrieve.
+     * @param eventSim the event simulation instance.
+     */
     public CustomerSim(int maxTicketsToRetrieve, EventSim eventSim) {
         this.customerName = "C" + customerCount++;
         this.customerRetrievalRate = maxTicketsToRetrieve;
         this.eventSim = eventSim;
     }
 
+    /**
+     * Runs the customer simulation.
+     * Continuously attempts to retrieve tickets until the final transaction is completed.
+     */
     @Override
     public void run() {
         Random random = new Random();

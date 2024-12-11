@@ -5,14 +5,28 @@ import API from "../../axios";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 
+/**
+ * CreateEvent component for creating a new event.
+ * Allows the user to input event details and submit them to the server.
+ */
 const CreateEvent: React.FC = () => {
+    // Get the user data from the UserContext
     const { userData } = useContext(UserContext) || {};
+    // Hook to navigate programmatically
     const navigate = useNavigate();
+    // State to store the event name
     const [name, setName] = useState("");
+    // State to store the event description
     const [desc, setDesc] = useState("");
+    // State to store the total number of tickets
     const [totalTickets, setTotalTickets] = useState<number | "">("");
+    // State to store the maximum capacity of the event
     const [maxCapacity, setMaxCapacity] = useState<number | "">("");
 
+    /**
+     * Handles the form submission to create a new event.
+     * @param e - The form submission event.
+     */
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (userData) {
@@ -36,7 +50,7 @@ const CreateEvent: React.FC = () => {
     };
 
     return (
-        <div>
+        <div style={{ width: 400 }}>
             <Button
                 variant="text"
                 onClick={() => navigate("/dashboard")}
@@ -80,6 +94,7 @@ const CreateEvent: React.FC = () => {
                     fullWidth
                     margin="normal"
                 />
+                <div style={{ marginBottom: 20 }} />
                 <Button variant="outlined" type="submit" fullWidth>
                     Create Event
                 </Button>
