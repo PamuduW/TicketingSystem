@@ -4,18 +4,15 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.Scanner;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Main {
     private static ThreadPoolExecutor threadPoolExecutor;
     private static final ReentrantLock lock = new ReentrantLock();
-    private static int totalTickets;
-    private static int vendorReleaseRate;
-    private static int customerRetrievalRate;
-    private static int maxTicketCapacity;
+    private static int totalTickets, vendorReleaseRate, customerRetrievalRate, maxTicketCapacity;
     private static boolean isRunning = false;
     public static boolean activeVendors;
     public static Console console;
@@ -23,8 +20,6 @@ public class Main {
 
     public static void main(String[] args) {
         System.out.println("\n--- Welcome to the ticketing simulation ---\n\nSearching for a Config file...");
-
-        // Check if the config file exists
         File configFile = new File("Logs/config.json");
         boolean fileExists = configFile.exists();
 
@@ -32,8 +27,7 @@ public class Main {
             if (fileExists) {
                 System.out.println("Config file found");
                 try (FileReader reader = new FileReader(configFile)) {
-                    Gson gson = new Gson();
-                    Config config = gson.fromJson(reader, Config.class);
+                    Config config = new Gson().fromJson(reader, Config.class);
                     totalTickets = config.getTotalTickets();
                     vendorReleaseRate = config.getVendorReleaseRate();
                     customerRetrievalRate = config.getCustomerRetrievalRate();
@@ -49,11 +43,9 @@ public class Main {
                 break;
             }
         }
-        System.out.println("\n--- Current Config ---");
-        System.out.println("Total Number of Tickets : " + totalTickets);
-        System.out.println("Maximum Ticket Release Rate : " + vendorReleaseRate);
-        System.out.println("Maximum Customer Retrieval Rate : " + customerRetrievalRate);
-        System.out.println("Maximum Ticket Capacity : " + maxTicketCapacity);
+
+        System.out.printf("\n--- Current Config ---\nTotal Number of Tickets: %d\nMaximum Ticket Release Rate: %d\nMaximum Customer Retrieval Rate: %d\nMaximum Ticket Capacity: %d\n",
+                totalTickets, vendorReleaseRate, customerRetrievalRate, maxTicketCapacity);
         console = new Console();
 
         while (true) {
@@ -64,13 +56,10 @@ public class Main {
                     3. Edit Config File
                     4. Quit
                     -----------------
-                    Choose an option :\s""");
+                    Choose an option:\s""");
             try {
                 switch (Integer.parseInt(scanner.nextLine())) {
-                    case 1 -> {
-                        console = new Console();
-                        startSimulation(totalTickets, vendorReleaseRate, customerRetrievalRate, maxTicketCapacity, console);
-                    }
+                    case 1 -> startSimulation();
                     case 2 -> stopSimulation(true);
                     case 3 -> setConfig();
                     case 4 -> {
@@ -85,20 +74,18 @@ public class Main {
         }
     }
 
-    // Method to set the configuration
     private static void setConfig() {
         while (true) {
             System.out.println("\n--- Setting the Config File ---");
-            totalTickets = getInput("Enter Total Number of Tickets : ");
-            vendorReleaseRate = getInput("Enter Maximum Ticket Release Rate : ");
-            customerRetrievalRate = getInput("Enter Maximum Customer Retrieval Rate : ");
-            maxTicketCapacity = getInput("Enter Maximum Ticket Capacity : ");
+            totalTickets = getInput("Enter the Total Number of Tickets: ");
+            vendorReleaseRate = getInput("Enter Maximum Ticket Release Rate: ");
+            customerRetrievalRate = getInput("Enter Maximum Customer Retrieval Rate: ");
+            maxTicketCapacity = getInput("Enter Maximum Ticket Capacity: ");
             try {
                 new File("Logs").mkdir();
                 Config config = new Config(totalTickets, vendorReleaseRate, customerRetrievalRate, maxTicketCapacity);
-                Gson gson = new Gson();
                 try (FileWriter writer = new FileWriter("Logs/config.json")) {
-                    gson.toJson(config, writer);
+                    new Gson().toJson(config, writer);
                 }
                 System.out.println("Successfully wrote the config information to the file");
                 break;
@@ -108,7 +95,6 @@ public class Main {
         }
     }
 
-    // Method to get user input for configuration
     private static int getInput(String message) {
         while (true) {
             try {
@@ -122,20 +108,18 @@ public class Main {
         }
     }
 
-    // Method to start the simulation
-    private static void startSimulation(int totalTickets, int vendorReleaseRate, int customerRetrievalRate, int maxTicketCapacity, Console console) {
+    private static void startSimulation() {
         if (isRunning) {
-            System.out.println("Simulation is already running.");
+            System.out.println("The simulation is already running.");
             return;
         }
         System.out.println("\n--- Simulation Configuration ---");
-        int noOfVendors = getInput("Enter Number of Vendors simulated : ");
-        int noOfVIPCustomers = getInput("Enter Number of VIP Customers simulated : ");
-        int noOfCustomers = getInput("Enter Number of Customers simulated : ");
-        int vendorSpeed = getInput("Enter Vendor interaction Speed (in ms) : ");
-        int customerSpeed = getInput("Enter Customer interaction Speed (in ms) : ");
+        int noOfVendors = getInput("Enter the Number of Vendors simulated: ");
+        int noOfVIPCustomers = getInput("Enter the Number of VIP Customers simulated: ");
+        int noOfCustomers = getInput("Enter the Number of Customers simulated: ");
+        int vendorSpeed = getInput("Enter the Vendor interaction Speed (in ms): ");
+        int customerSpeed = getInput("Enter the Customer interaction Speed (in ms): ");
 
-        // Check if the user wants to save the simulation log
         if (console.getSaveFilePermission()) {
             console.getSaveFileName();
         }
@@ -172,7 +156,6 @@ public class Main {
         System.out.println("Simulation started.");
     }
 
-    // Method to stop the simulation
     public static void stopSimulation(boolean message) {
         lock.lock();
         try {
@@ -180,10 +163,7 @@ public class Main {
                 System.out.println("Simulation is not running.");
                 return;
             }
-
-            // Interrupt all vendor and customer threads
             threadPoolExecutor.shutdownNow();
-
             isRunning = false;
             if (message) {
                 System.out.println("Simulation stopped by the user.");

@@ -1,4 +1,4 @@
-public class CustomerTask implements Runnable, Comparable<CustomerTask> {
+public class CustomerTask extends Console implements Runnable, Comparable<CustomerTask> {
     private final Runnable task;
     private final boolean isVIP;
 
