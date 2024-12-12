@@ -23,7 +23,10 @@ const StartPage: React.FC = () => (
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/event/:eventId" element={<Event />} />
                 <Route path="/simulation/:eventId" element={<Simulation />} />
-                <Route path="/changeTickets/:eventId" element={<ChangeTickets />} />
+                <Route
+                    path="/changeTickets/:eventId"
+                    element={<ChangeTickets />}
+                />
                 <Route path="/addVendors/:eventId" element={<AddVendors />} />
                 <Route path="/createEvent" element={<CreateEvent />} />
                 <Route path="/updateEvent/:eventId" element={<UpdateEvent />} />

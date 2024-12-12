@@ -47,7 +47,10 @@ const CreateEvent: React.FC = () => {
                 });
                 navigate("/dashboard");
             } catch (error: unknown) {
-                if (axios.isAxiosError(error) && error.response?.status === 409) {
+                if (
+                    axios.isAxiosError(error) &&
+                    error.response?.status === 409
+                ) {
                     setErrorMessage("Event with the same name already exists");
                 } else {
                     console.error("Error creating event:", error);
@@ -92,7 +95,10 @@ const CreateEvent: React.FC = () => {
                         const value = parseInt(e.target.value);
                         if (value > 0) {
                             setTotalTickets(value);
-                            if (typeof maxCapacity === "number" && maxCapacity > value) {
+                            if (
+                                typeof maxCapacity === "number" &&
+                                maxCapacity > value
+                            ) {
                                 setMaxCapacity(value);
                             }
                         }
@@ -107,7 +113,11 @@ const CreateEvent: React.FC = () => {
                     value={maxCapacity}
                     onChange={(e) => {
                         const value = parseInt(e.target.value);
-                        if (value > 0 && typeof totalTickets === "number" && value <= totalTickets) {
+                        if (
+                            value > 0 &&
+                            typeof totalTickets === "number" &&
+                            value <= totalTickets
+                        ) {
                             setMaxCapacity(value);
                         }
                     }}

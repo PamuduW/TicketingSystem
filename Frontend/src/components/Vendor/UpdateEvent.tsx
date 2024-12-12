@@ -95,6 +95,7 @@ const UpdateEvent: React.FC = () => {
         setError(null);
         try {
             await API.put(`/event/${eventId}`, formData);
+            alert("Event updated successfully");
             navigate(`/event/${eventId}`);
         } catch (error) {
             console.error("Error updating event:", error);
@@ -142,7 +143,10 @@ const UpdateEvent: React.FC = () => {
                                 setFormData((prevData) => ({
                                     ...prevData,
                                     totalTickets: value,
-                                    maxCapacity: Math.min(prevData.maxCapacity, value),
+                                    maxCapacity: Math.min(
+                                        prevData.maxCapacity,
+                                        value
+                                    ),
                                 }));
                             }
                         }}

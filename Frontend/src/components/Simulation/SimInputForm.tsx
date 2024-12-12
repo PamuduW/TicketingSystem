@@ -74,7 +74,8 @@ const SimInputForm: React.FC<SimInputFormProps> = ({ eventId, onReload }) => {
             if (axios.isAxiosError(error) && error.response) {
                 if (error.response.status === 409) {
                     alert("The simulation is already running");
-                } if (error.response.status === 500) {
+                }
+                if (error.response.status === 500) {
                     alert("Something went wrong. Please try again.");
                 } else {
                     console.error("Error:", error);

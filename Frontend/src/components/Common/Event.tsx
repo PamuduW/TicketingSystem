@@ -39,7 +39,9 @@ const Event: React.FC = () => {
     // State to store the event details
     const [event, setEvent] = useState<Event | null>(null);
     // State to store vendor details
-    const [vendorDetails, setVendorDetails] = useState<{ [key: string]: Vendor }>({});
+    const [vendorDetails, setVendorDetails] = useState<{
+        [key: string]: Vendor;
+    }>({});
     // State to manage the drawer open/close status for changing tickets
     const [drawerOpen, setDrawerOpen] = useState(false);
     // State to manage the drawer open/close status for adding vendors

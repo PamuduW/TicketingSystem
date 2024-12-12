@@ -30,7 +30,9 @@ const AddVendors: React.FC = () => {
     // State to store the event details
     const [event, setEvent] = useState<Event | null>(null);
     // State to store the details of all vendors
-    const [vendorDetails, setVendorDetails] = useState<{ [key: string]: Vendor }>({});
+    const [vendorDetails, setVendorDetails] = useState<{
+        [key: string]: Vendor;
+    }>({});
     // State to store the list of all vendors
     const [allVendors, setAllVendors] = useState<Vendor[]>([]);
     // State to store the list of selected vendors
@@ -147,8 +149,14 @@ const AddVendors: React.FC = () => {
                                 <label>
                                     <input
                                         type="checkbox"
-                                        checked={selectedVendors.includes(vendor.vendorId)}
-                                        onChange={() => handleCheckboxChange(vendor.vendorId)}
+                                        checked={selectedVendors.includes(
+                                            vendor.vendorId
+                                        )}
+                                        onChange={() =>
+                                            handleCheckboxChange(
+                                                vendor.vendorId
+                                            )
+                                        }
                                     />
                                     {vendor.username}
                                 </label>
